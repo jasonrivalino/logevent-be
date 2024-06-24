@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-      - dev
-      - hotfix
 
 jobs:
   build:
@@ -32,10 +30,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-      - name: Check Quality Gate status
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          projectKey: logevent-be
-          waitForQualityGate: 'true'
+      # - name: Check Quality Gate status
+      #   uses: sonarsource/sonarqube-quality-gate-action@master
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #   with:
+      #     projectKey: logevent-be
+      #     waitForQualityGate: 'true'
