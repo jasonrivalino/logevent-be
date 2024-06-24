@@ -10,7 +10,8 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "vercel-build": "tsc",
-    "sonar": "sonarqube-scanner"
+    "sonar": "sonarqube-scanner",
+    "postinstall": "prisma generate && prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^5.15.1",
