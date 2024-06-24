@@ -12,5 +12,5 @@
       "dest": "/src/index.ts"
     }
   ],
-  "ignoreBuildStep": "if [ \"$VERCEL_GIT_COMMIT_REF\" != \"main\" ]; then echo 'Skipping build for non-main branch'; exit 0; fi"
+  "ignoreCommand": "if [ \"$VERCEL_GIT_COMMIT_REF\" != \"main\" ]; then exit 0; fi; exit 1;"
 }
