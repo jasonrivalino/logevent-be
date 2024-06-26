@@ -7,5 +7,5 @@ RUN npx prisma generate
 RUN yarn build
 COPY start.sh ./
 RUN chmod +x start.sh
-EXPOSE 3000
+EXPOSE 5000
 CMD ["./start.sh"]
