@@ -7,15 +7,6 @@ import { google } from "googleapis";
 import { Router } from "express";
 
 class AuthController {
-  getRoutes() {
-    return Router()
-      .get("/", this.readUsers)
-      .get("/google", this.googleAuth)
-      .get("/google/callback", this.googleAuthCallback)
-      .post("/signin", this.signIn)
-      .post("/sigup", this.signUp);
-  }
-
   async readUsers(req: Request, res: Response) {
     console.log("readUsers");
     const users = await userRepository.findAllUsers();
@@ -101,6 +92,15 @@ class AuthController {
     });
 
     res.json(newUser);
+  }
+
+  getRoutes() {
+    return Router()
+      .get("/", this.readUsers)
+      .get("/google", this.googleAuth)
+      .get("/google/callback", this.googleAuthCallback)
+      .post("/signin", this.signIn)
+      .post("/sigup", this.signUp);
   }
 }
 
