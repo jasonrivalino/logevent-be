@@ -1,6 +1,6 @@
 import { Storage, Bucket } from '@google-cloud/storage';
 
-class GoogleCloudUtil {
+class GoogleCloudUtils {
   private storage: Storage;
   private bucket: Bucket;
 

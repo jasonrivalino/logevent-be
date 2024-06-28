@@ -14,8 +14,16 @@ class UserRepository {
     return prisma.user.findMany();
   }
 
+  async findUserById(id: number): Promise<User | null> {
+    return prisma.user.findUnique({ where: { id } });
+  }
+
   async findUserByEmail(email: string): Promise<User | null> {
     return prisma.user.findUnique({ where: { email } });
+  }
+
+  async updateUser(id: number, data: Record<string, any> ): Promise<User> {
+    return prisma.user.update({ where: { id }, data });
   }
 }
 

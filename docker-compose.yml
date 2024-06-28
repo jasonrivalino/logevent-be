@@ -1,5 +1,6 @@
 services:
   app:
+    container_name: app
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,6 +15,7 @@ services:
       - mysql
 
   mysql:
+    container_name: mysql
     image: mysql:latest
     ports:
       - "3307:3306"
@@ -24,6 +26,7 @@ services:
       - db-data:/var/lib/mysql
 
   # sonarqube:
+  #   container_name: sonarqube
   #   image: sonarqube:latest
   #   ports:
   #     - "9000:9000"
@@ -39,6 +42,7 @@ services:
   #     - sonarqube_temp:/opt/sonarqube/temp
 
   # sonarqube-db:
+  #   container_name: sonarqube-db
   #   image: postgres:alpine
   #   environment:
   #     - POSTGRES_USER=sonar

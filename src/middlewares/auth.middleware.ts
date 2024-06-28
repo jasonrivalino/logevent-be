@@ -1,4 +1,4 @@
-import jwtUtil from "../utils/jwt";
+import jwtUtils from "../utils/jwt";
 import { Request, Response, NextFunction } from "express";
 
 interface CustomRequest extends Request {
@@ -7,20 +7,20 @@ interface CustomRequest extends Request {
 
 class AuthMiddleware {
   async authenticate(req: CustomRequest, res: Response, next: NextFunction) {
-    const token = req.headers.authorization;
-
-    if (!token) {
-      return res.status(401).json({ message: "Token not provided" });
-    }
-
     try {
-      const decoded = jwtUtil.verify(token);
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader) {
+        return res.status(401).json({ message: "Token not provided" });
+      }
+
+      const decoded = jwtUtils.verifyToken(authHeader);
 
       req.user = decoded;
 
       next();
-    } catch (error) {
-      return res.status(401).json({ message: "Invalid token" });
+    } catch (error: any) {
+      return res.status(401).json({ message: error.message || "Invalid token" });
     }
   }
 }

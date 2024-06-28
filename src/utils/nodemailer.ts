@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-class NodemailerUtil {
+class NodemailerUtils {
   private transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
