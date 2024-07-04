@@ -62,7 +62,7 @@ class AuthController {
 
   async signUp(req: Request, res: Response) {
     try {
-      const { email, password } = req.body;
+      const { name, email, password } = req.body;
       const user = await userRepository.findUserByEmail(email);
 
       if (user) {
@@ -71,7 +71,7 @@ class AuthController {
 
       const hashedPassword = await hash(password, 10);
       const newUser = await userRepository.createUser({
-        name: null,
+        name,
         email,
         password: hashedPassword
       });
@@ -144,8 +144,6 @@ class AuthController {
       const token = jwtUtils.sign({ id: user.id });
 
       return res.redirect(`${process.env.REACT_APP_URL}/google-callback?token=${token}`);
-
-      res.json({ token });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
