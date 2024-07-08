@@ -7,9 +7,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Album {
+  id           Int      @id @default(autoincrement())
+  productId    Int
+  productImage String?  @db.Text
+
+  product   Product     @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id         Int       @id @default(autoincrement())
+  productId  Int
+  name       String
+  phone      String
+  email      String
+  address    String
+  usageDate  DateTime
+  orderDate  DateTime  @default(now())
+  orderImage String?   @db.Text
+
+  product   Product    @relation(fields: [productId], references: [id])
+  reviews   Review[]
+}
+
+model Product {
+  id            Int      @id @default(autoincrement())
+  vendorId      Int
+  name          String
+  specification String
+  category      String
+  price         Float
+  description   String?  @db.Text
+
+  vendor        Vendor   @relation(fields: [vendorId], references: [id])
+  albums        Album[]
+  orders        Order[]
+}
+
+model Review {
+  id         Int       @id @default(autoincrement())
+  orderId    Int
+  rating     Int
+  comment    String
+  reviewDate DateTime  @default(now())
+
+  order      Order     @relation(fields: [orderId], references: [id])
+}
+
 model User {
   id       Int      @id @default(autoincrement())
-  name     String?
   email    String   @unique
   password String?
+  name     String?
+  phone    String?
+  picture  String?  @db.Text
+  isAdmin  Boolean  @default(false)
+}
+
+model Vendor {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  phone    String
+  address  String
+  picture  String?  @db.Text
+
+  products Product[]
 }

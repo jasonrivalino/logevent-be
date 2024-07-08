@@ -12,7 +12,7 @@ interface CustomRequest extends Request {
 }
 
 class AuthController {
-  async readUsers(req: Request, res: Response) {
+  async readAllUser(req: Request, res: Response) {
     try {
       const users = await userRepository.findAllUsers();
       res.json(users);
@@ -21,7 +21,7 @@ class AuthController {
     }
   }
 
-  async readUser(req: CustomRequest, res: Response) {
+  async userProfile(req: CustomRequest, res: Response) {
     try {
       const id = req.user?.id;
       if (!id) {
@@ -62,7 +62,7 @@ class AuthController {
 
   async signUp(req: Request, res: Response) {
     try {
-      const { name, email, password } = req.body;
+      const { email, password, name, phone, picture } = req.body;
       const user = await userRepository.findUserByEmail(email);
 
       if (user) {
@@ -71,9 +71,11 @@ class AuthController {
 
       const hashedPassword = await hash(password, 10);
       const newUser = await userRepository.createUser({
-        name,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        name,
+        phone,
+        picture,
       });
 
       res.json(newUser);
@@ -135,9 +137,11 @@ class AuthController {
 
       if (!user) {
         user = await userRepository.createUser({
-          name: data.name,
           email: data.email,
-          password: null
+          password: null,
+          name: data.name,
+          phone: null,
+          picture: null,
         });
       }
 
@@ -151,11 +155,11 @@ class AuthController {
 
   getRoutes() {
     return Router()
-      .get("/", this.readUsers)
-      .get("/read", authMiddleware.authenticate, this.readUser)
+      .get("/read", this.readAllUser)
+      .get("/profile", authMiddleware.authenticate, this.userProfile)
       .post("/signin", this.signIn)
       .post("/signup", this.signUp)
-      .patch("/update", authMiddleware.authenticate, this.updateUser)
+      .put("/update", authMiddleware.authenticate, this.updateUser)
       .get("/google", this.googleAuth)
       .get("/google/callback", this.googleAuthCallback);
   }
