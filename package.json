@@ -9,7 +9,7 @@
     "start": "node dist/index.js",
     "dev": "nodemon -L",
     "build": "tsc",
-    "vercel-build": "tsc",
+    "vercel-build": "npx prisma generate && npm run build",
     "test": "jest --config jest.config.ts"
   },
   "dependencies": {
