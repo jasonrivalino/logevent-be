@@ -25,4 +25,4 @@ class NodemailerUtils {
   }
 }
 
-export default new NodemailerUtil();
+export default new NodemailerUtils();

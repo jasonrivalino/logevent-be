@@ -1,6 +1,6 @@
 import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
 
-class JwtUtil {
+class JwtUtils {
   private secret: Secret;
 
   constructor(secret?: Secret) {
@@ -44,4 +44,4 @@ class JwtUtil {
   }
 }
 
-export default new JwtUtil();
+export default new JwtUtils();

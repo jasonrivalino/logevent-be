@@ -33,4 +33,4 @@ class GoogleCloudUtils {
   }
 }
 
-export default new GoogleCloudUtil();
+export default new GoogleCloudUtils();
