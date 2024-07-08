@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { hash } from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -10,6 +11,7 @@ async function main() {
       data: {
         name: 'Alice',
         email: 'alice@prisma.io',
+        password: await hash('password', 10),
       },
     });
 
@@ -17,6 +19,7 @@ async function main() {
       data: {
         name: 'Bob',
         email: 'bob@prisma.io',
+        password: await hash('password', 10),
       },
     });
     console.log("Database seeded!");

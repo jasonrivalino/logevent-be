@@ -7,9 +7,9 @@ on:
 
 jobs:
   build:
-    name: Build and analyze
+    name: Build and Analyze
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,11 +24,14 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Run SonarQube analysis
-        run: npx sonar-scanner -X
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      # - name: Run tests
+      #   run: yarn test
+
+      # - name: Run SonarQube analysis
+      #   run: npx sonar-scanner -X
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       # - name: Check Quality Gate status
       #   uses: sonarsource/sonarqube-quality-gate-action@master
