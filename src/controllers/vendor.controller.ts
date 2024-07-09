@@ -6,7 +6,7 @@ class VendorController {
   async readAllVendor(req: Request, res: Response) {
     try {
       const vendors = await vendorRepository.findAllVendors();
-      res.json(vendors);
+      res.status(200).json(vendors);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -19,7 +19,8 @@ class VendorController {
       if (!vendor) {
         return res.status(404).json({ message: "Vendor not found" });
       }
-      res.json(vendor);
+
+      res.status(200).json(vendor);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -28,13 +29,14 @@ class VendorController {
   async createVendor(req: Request, res: Response) {
     try {
       const { name, phone, address, picture } = req.body;
-      const vendor = await vendorRepository.createVendor({
+      const newVendor = await vendorRepository.createVendor({
         name,
         phone,
         address,
         picture
       });
-      res.json(vendor);
+
+      res.status(201).json(newVendor);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -47,6 +49,7 @@ class VendorController {
       if (!vendor) {
         return res.status(404).json({ message: "Vendor not found" });
       }
+
       const { name, phone, address, picture } = req.body;
       const updatedVendor = await vendorRepository.updateVendor(id, {
         name: name || vendor.name,
@@ -54,7 +57,8 @@ class VendorController {
         address: address || vendor.address,
         picture: picture || vendor.picture
       });
-      res.json(updatedVendor);
+
+      res.status(200).json(updatedVendor);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -67,8 +71,9 @@ class VendorController {
       if (!vendor) {
         return res.status(404).json({ message: "Vendor not found" });
       }
+
       await vendorRepository.deleteVendor(id);
-      res.json(vendor);
+      res.status(204).json(vendor);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

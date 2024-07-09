@@ -6,7 +6,7 @@ class OrderController {
   async readAllOrder(req: Request, res: Response) {
     try {
       const orders = await orderRepository.findAllOrders();
-      res.json(orders);
+      res.status(200).json(orders);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -19,7 +19,8 @@ class OrderController {
       if (!order) {
         return res.status(404).json({ message: "Order not found" });
       }
-      res.json(order);
+
+      res.status(200).json(order);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -28,7 +29,7 @@ class OrderController {
   async createOrder(req: Request, res: Response) {
     try {
       const { productId, name, phone, email, address, usageDate, orderImage } = req.body;
-      const order = await orderRepository.createOrder({
+      const newOrder = await orderRepository.createOrder({
         productId,
         name,
         phone,
@@ -37,7 +38,8 @@ class OrderController {
         usageDate,
         orderImage
       });
-      res.json(order);
+
+      res.status(201).json(newOrder);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -50,7 +52,8 @@ class OrderController {
       if (!order) {
         return res.status(404).json({ message: "Order not found" });
       }
-      const { productId, name, phone, email, address, usageDate, orderImage } = req.body;
+
+      const { productId, name, phone, email, address, usageDate, orderDate, orderImage } = req.body;
       const updatedOrder = await orderRepository.updateOrder(id, {
         productId: productId || order.productId,
         name: name || order.name,
@@ -58,9 +61,11 @@ class OrderController {
         email: email || order.email,
         address: address || order.address,
         usageDate: usageDate || order.usageDate,
+        orderDate: orderDate || order.orderDate,
         orderImage: orderImage || order.orderImage
       });
-      res.json(updatedOrder);
+
+      res.status(200).json(updatedOrder);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -73,8 +78,9 @@ class OrderController {
       if (!order) {
         return res.status(404).json({ message: "Order not found" });
       }
+      
       await orderRepository.deleteOrder(id);
-      res.json(order);
+      res.status(204).json(order);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

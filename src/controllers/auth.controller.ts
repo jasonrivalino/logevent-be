@@ -15,7 +15,7 @@ class AuthController {
   async readAllUser(req: Request, res: Response) {
     try {
       const users = await userRepository.findAllUsers();
-      res.json(users);
+      res.status(200).json(users);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -27,11 +27,13 @@ class AuthController {
       if (!id) {
         return res.status(400).json({ message: "User ID not found" });
       }
+
       const user = await userRepository.findUserById(id);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      res.json(user);
+
+      res.status(200).json(user);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -41,20 +43,17 @@ class AuthController {
     try {
       const { email, password } = req.body;
       const user = await userRepository.findUserByEmail(email);
-
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
 
       const isPasswordValid = user.password ? await compare(password, user.password) : false;
-
       if (!isPasswordValid) {
         return res.status(401).json({ message: "Invalid password" });
       }
 
       const token = jwtUtils.sign({ id: user.id });
-
-      res.json({ token });
+      res.status(201).json({ token });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -64,7 +63,6 @@ class AuthController {
     try {
       const { email, password, name, phone, picture } = req.body;
       const user = await userRepository.findUserByEmail(email);
-
       if (user) {
         return res.status(400).json({ message: "User already exists" });
       }
@@ -78,7 +76,7 @@ class AuthController {
         picture,
       });
 
-      res.json(newUser);
+      res.status(201).json(newUser);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -90,18 +88,28 @@ class AuthController {
       if (!id) {
         return res.status(400).json({ message: "User ID not found" });
       }
+
       const user = await userRepository.findUserById(id);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      const { name, email, password } = req.body;
+
+      const { name, email, password, picture, isAdmin } = req.body;
+      const existingUser = email ? await userRepository.findUserByEmail(email) : null;
+      if (existingUser && existingUser.id !== user.id) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+
       const hashedPassword = password ? await hash(password, 10) : null;
       const updatedUser = await userRepository.updateUser(id, {
         name: name || user.name,
         email: email || user.email,
-        password: hashedPassword || user.password
+        password: hashedPassword || user.password,
+        picture: picture || user.picture,
+        isAdmin: isAdmin || user.isAdmin,
       });
-      res.json(updatedUser);
+
+      res.status(200).json(updatedUser);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -120,21 +128,19 @@ class AuthController {
       const { code } = req.query;
       const { tokens } = await oauth2Client.getToken(code as string);
       oauth2Client.setCredentials(tokens);
-
+      
       const oauth2 = google.oauth2({
         auth: oauth2Client,
         version: 'v2',
       });
 
       const { data } = await oauth2.userinfo.get();
-
       if (!data.email || !data.name) {
         res.status(401).json({ message: 'Unauthorized' });
         return;
       }
 
       let user = await userRepository.findUserByEmail(data.email);
-
       if (!user) {
         user = await userRepository.createUser({
           email: data.email,
@@ -146,7 +152,6 @@ class AuthController {
       }
 
       const token = jwtUtils.sign({ id: user.id });
-
       return res.redirect(`${process.env.REACT_APP_URL}/google-callback?token=${token}`);
     } catch (error: any) {
       res.status(500).json({ message: error.message });

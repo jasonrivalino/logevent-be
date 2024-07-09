@@ -6,7 +6,7 @@ class ProductController {
   async readAllProduct(req: Request, res: Response) {
     try {
       const products = await productRepository.findAllProducts();
-      res.json(products);
+      res.status(200).json(products);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -19,7 +19,8 @@ class ProductController {
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
-      res.json(product);
+
+      res.status(200).json(product);
     }
     catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -29,7 +30,7 @@ class ProductController {
   async createProduct(req: Request, res: Response) {
     try {
       const { vendorId, name, specification, category, price, description } = req.body;
-      const product = await productRepository.createProduct({
+      const newProduct = await productRepository.createProduct({
         vendorId,
         name,
         specification,
@@ -37,7 +38,8 @@ class ProductController {
         price,
         description
       });
-      res.json(product);
+
+      res.status(201).json(newProduct);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -50,6 +52,7 @@ class ProductController {
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
+
       const { vendorId, name, specification, category, price, description } = req.body;
       const updatedProduct = await productRepository.updateProduct(id, {
         vendorId: vendorId || product.vendorId,
@@ -59,7 +62,8 @@ class ProductController {
         price: price || product.price,
         description: description || product.description
       });
-      res.json(updatedProduct);
+
+      res.status(200).json(updatedProduct);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -72,8 +76,9 @@ class ProductController {
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
+
       await productRepository.deleteProduct(id);
-      res.json(product);
+      res.status(204).json(product);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
