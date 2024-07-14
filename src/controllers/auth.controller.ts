@@ -1,5 +1,6 @@
 import userRepository from "../repositories/user.repository";
 import authMiddleware from "../middlewares/auth.middleware";
+import cloudinaryUtils from "../utils/cloudinary";
 import jwtUtils from "../utils/jwt";
 import { oauth2Client, authorizationUrl } from "../utils/oauth";
 import { Request, Response } from "express";
@@ -94,18 +95,20 @@ class AuthController {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const { name, email, password, picture, isAdmin } = req.body;
+      const { name, email, password, phone, picture, isAdmin } = req.body;
       const existingUser = email ? await userRepository.findUserByEmail(email) : null;
       if (existingUser && existingUser.id !== user.id) {
         return res.status(400).json({ message: "Email already in use" });
       }
 
+      const pictureUrl = picture ? await cloudinaryUtils.uploadFile(picture) : null;
       const hashedPassword = password ? await hash(password, 10) : null;
       const updatedUser = await userRepository.updateUser(id, {
         name: name || user.name,
         email: email || user.email,
         password: hashedPassword || user.password,
-        picture: picture || user.picture,
+        phone: phone || user.phone,
+        picture: pictureUrl || user.picture,
         isAdmin: isAdmin || user.isAdmin,
       });
 

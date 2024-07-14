@@ -12,13 +12,13 @@ class GoogleCloudUtils {
     this.bucket = this.storage.bucket(process.env.GCP_BUCKET ?? 'default-bucket');
   }
 
-  async uploadFile(file: Express.Multer.File) {
-    const blob = this.bucket.file(file.originalname);
+  async uploadFile(file: Buffer, filename: string) {
+    const blob = this.bucket.file(filename);
     const blobStream = blob.createWriteStream({
       resumable: false,
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       blobStream.on('finish', () => {
         const publicUrl = `https://storage.googleapis.com/${this.bucket.name}/${blob.name}`;
         resolve(publicUrl);
@@ -28,7 +28,7 @@ class GoogleCloudUtils {
         reject(err);
       });
 
-      blobStream.end(file.buffer);
+      blobStream.end(file);
     });
   }
 }
