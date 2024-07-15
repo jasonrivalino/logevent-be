@@ -73,12 +73,13 @@ async function main() {
   const orderCount = 100;
   const orders: Order[] = [];
   for (let i = 0; i < orderCount; i++) {
+    const user = users[Math.floor(Math.random() * userCount)];
     const order = await prisma.order.create({
       data: {
         productId: products[Math.floor(Math.random() * productCount)].id,
-        name: users[Math.floor(Math.random() * userCount)].name!,
-        phone: users[Math.floor(Math.random() * userCount)].phone!,
-        email: users[Math.floor(Math.random() * userCount)].email!,
+        name: user.name!,
+        phone: user.phone!,
+        email: user.email!,
         address: `Order Address ${i+1}`,
         usageDate: new Date(),
       },
