@@ -2,17 +2,7 @@ import { Product, Vendor } from "@prisma/client";
 import vendorRepository from "./vendor.repository";
 import reviewRepository from "./review.repository";
 import prisma from "../utils/prisma";
-
-type ProductDetails = {
-  vendorId: number;
-  vendorAddress: string;
-  name: string;
-  specification: string;
-  category: string;
-  price: number;
-  description: string | null;
-  rating: number | null;
-};
+import { ProductDetails } from "../utils/types";
 
 class ProductRepository {
   async findAllProducts(): Promise<ProductDetails[]> {
@@ -53,6 +43,7 @@ class ProductRepository {
     const vendor = await vendorRepository.findVendorById(product.vendorId) as Vendor;
     const productRating = await reviewRepository.getAverageRatingByProductId(product.id);
     return {
+      id: product.id,
       vendorId: product.vendorId,
       vendorAddress: vendor.address,
       name: product.name,

@@ -2,15 +2,12 @@ import userRepository from "../repositories/user.repository";
 import authMiddleware from "../middlewares/auth.middleware";
 import cloudinaryUtils from "../utils/cloudinary";
 import jwtUtils from "../utils/jwt";
+import { CustomRequest } from "../utils/types";
 import { oauth2Client, authorizationUrl } from "../utils/oauth";
 import { Request, Response } from "express";
 import { hash, compare } from "bcrypt";
 import { google } from "googleapis";
 import { Router } from "express";
-
-interface CustomRequest extends Request {
-  user?: any;
-}
 
 class AuthController {
   async readAllUser(req: Request, res: Response) {
@@ -22,9 +19,10 @@ class AuthController {
     }
   }
 
-  async userProfile(req: CustomRequest, res: Response) {
+  async userProfile(req: Request, res: Response) {
     try {
-      const id = req.user?.id;
+      const customReq = req as CustomRequest;
+      const id = customReq.user.id;
       if (!id) {
         return res.status(400).json({ message: "User ID not found" });
       }
@@ -83,9 +81,10 @@ class AuthController {
     }
   }
 
-  async updateUser(req: CustomRequest, res: Response) {
+  async updateUser(req: Request, res: Response) {
     try {
-      const id = req.user?.id;
+      const customReq = req as CustomRequest;
+      const id = customReq.user.id;
       if (!id) {
         return res.status(400).json({ message: "User ID not found" });
       }
