@@ -14,6 +14,7 @@ interface ProductDetails {
   price: number;
   description: string | null;
   rating: number | null;
+  reviewCount: number;
 };
 
 export type { CustomRequest, ProductDetails };

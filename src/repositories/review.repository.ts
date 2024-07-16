@@ -15,6 +15,12 @@ class ReviewRepository {
     return prisma.review.findMany({ where: { orderId } });
   }
 
+  async findReviewsByProductId(productId: number): Promise<Review[]> {
+    const orders = await orderRepository.findOrdersByProductId(productId);
+    const reviewsNested = await Promise.all(orders.map((order) => this.findReviewsByOrderId(order.id)));
+    return reviewsNested.flat();
+  }
+
   async createReview(data: {
     orderId: number;
     rating: number;
@@ -39,6 +45,13 @@ class ReviewRepository {
     if (ratings.length === 0) return 0;
     const sum = ratings.reduce((acc, rating) => acc + rating, 0);
     return sum / ratings.length;
+  }
+
+  async getReviewCountByProductId(productId: number): Promise<number> {
+    const orders = await orderRepository.findOrdersByProductId(productId);
+    const reviewsNested = await Promise.all(orders.map((order) => this.findReviewsByOrderId(order.id)));
+    const reviews = reviewsNested.flat();
+    return reviews.length;
   }
 }
 

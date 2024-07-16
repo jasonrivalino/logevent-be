@@ -42,6 +42,7 @@ class ProductRepository {
   async createProductDetails(product: Product): Promise<ProductDetails> {
     const vendor = await vendorRepository.findVendorById(product.vendorId) as Vendor;
     const productRating = await reviewRepository.getAverageRatingByProductId(product.id);
+    const productReviewCount = await reviewRepository.getReviewCountByProductId(product.id);
     return {
       id: product.id,
       vendorId: product.vendorId,
@@ -51,7 +52,8 @@ class ProductRepository {
       category: product.category,
       price: product.price,
       description: product.description,
-      rating: productRating || null
+      rating: productRating || null,
+      reviewCount: productReviewCount
     };
   }
 }
