@@ -29,10 +29,10 @@ class AlbumController {
 
   async createAlbum(req: Request, res: Response) {
     try {
-      const { productId, productImage } = req.body;
+      const { productId, albumImage } = req.body;
       const newAlbum = await albumRepository.createAlbum({
         productId,
-        productImage
+        albumImage
       });
 
       res.status(201).json(newAlbum);
@@ -49,10 +49,10 @@ class AlbumController {
         return res.status(404).json({ message: "Album not found" });
       }
 
-      const { productId, productImage } = req.body;
+      const { productId, albumImage } = req.body;
       const updatedAlbum = await albumRepository.updateAlbum(id, {
         productId: productId || album.productId,
-        productImage: productImage || album.productImage
+        albumImage: albumImage || album.albumImage
       });
 
       res.status(200).json(updatedAlbum);

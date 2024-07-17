@@ -28,8 +28,9 @@ class VendorController {
 
   async createVendor(req: Request, res: Response) {
     try {
-      const { name, phone, address, picture } = req.body;
+      const { email, name, phone, address, picture } = req.body;
       const newVendor = await vendorRepository.createVendor({
+        email,
         name,
         phone,
         address,
@@ -50,8 +51,9 @@ class VendorController {
         return res.status(404).json({ message: "Vendor not found" });
       }
 
-      const { name, phone, address, picture } = req.body;
+      const { email, name, phone, address, picture } = req.body;
       const updatedVendor = await vendorRepository.updateVendor(id, {
+        email: email || vendor.email,
         name: name || vendor.name,
         phone: phone || vendor.phone,
         address: address || vendor.address,

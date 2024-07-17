@@ -1,6 +1,6 @@
 import { Product, Vendor } from "@prisma/client";
 import vendorRepository from "./vendor.repository";
-import reviewRepository from "./review.repository";
+import itemRepository from "./item.repository";
 import prisma from "../utils/prisma";
 import { ProductDetails } from "../utils/types";
 
@@ -27,6 +27,7 @@ class ProductRepository {
     category: string;
     price: number;
     description: string | null;
+    productImage: string | null;
   }): Promise<Product> {
     return prisma.product.create({ data });
   }
@@ -41,8 +42,8 @@ class ProductRepository {
 
   async createProductDetails(product: Product): Promise<ProductDetails> {
     const vendor = await vendorRepository.findVendorById(product.vendorId) as Vendor;
-    const productRating = await reviewRepository.getAverageRatingByProductId(product.id);
-    const productReviewCount = await reviewRepository.getReviewCountByProductId(product.id);
+    const productRating = await itemRepository.getAverageRatingByProductId(product.id);
+    const productReviewCount = await itemRepository.getReviewCountByProductId(product.id);
     return {
       id: product.id,
       vendorId: product.vendorId,
@@ -52,7 +53,8 @@ class ProductRepository {
       category: product.category,
       price: product.price,
       description: product.description,
-      rating: productRating || null,
+      productImage: product.productImage,
+      rating: productRating,
       reviewCount: productReviewCount
     };
   }

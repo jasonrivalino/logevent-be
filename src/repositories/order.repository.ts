@@ -1,26 +1,36 @@
 import { Order } from "@prisma/client";
+import userRepository from "./user.repository";
+import { OrderDetails } from "../utils/types";
 import prisma from "../utils/prisma";
 
 class OrderRepository {
-  async findAllOrders(): Promise<Order[]> {
-    return prisma.order.findMany();
+  async findAllOrders(): Promise<OrderDetails[]> {
+    const orders = await prisma.order.findMany();
+    return Promise.all(orders.map((order) => this.createOrderDetails(order)));
   }
 
-  async findOrderById(id: number): Promise<Order | null> {
-    return prisma.order.findUnique({ where: { id } });
+  async findOrderById(id: number): Promise<OrderDetails | null> {
+    const order = await prisma.order.findUnique({ where: { id } });
+    if (!order) return null;
+    return this.createOrderDetails(order);
   }
 
-  async findOrdersByProductId(productId: number): Promise<Order[]> {
-    return prisma.order.findMany({ where: { productId } });
+  async findOrdersByProductId(productId: number): Promise<OrderDetails[]> {
+    const orders = await prisma.order.findMany({ where: { productId } });
+    return Promise.all(orders.map((order) => this.createOrderDetails(order)));
+  }
+
+  async findOrdersByUserId(userId: number): Promise<OrderDetails[]> {
+    const orders = await prisma.order.findMany({ where: { userId } });
+    return Promise.all(orders.map((order) => this.createOrderDetails(order)));
   }
 
   async createOrder(data: {
     productId: number;
-    name: string;
-    phone: string;
-    email: string;
+    userId: number;
     address: string;
-    usageDate: Date;
+    startDate: Date;
+    endDate: Date;
     orderImage: string | null;
   }): Promise<Order> {
     return prisma.order.create({ data });
@@ -32,6 +42,28 @@ class OrderRepository {
 
   async deleteOrder(id: number): Promise<Order> {
     return prisma.order.delete({ where: { id } });
+  }
+
+  async createOrderDetails(order: Order): Promise<OrderDetails> {
+    const user = await userRepository.findUserById(order.userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return {
+      id: order.id,
+      productId: order.productId,
+      userId: order.userId,
+      userEmail: user.email,
+      userName: user.name,
+      userPhone: user.phone,
+      address: order.address,
+      startDate: order.startDate,
+      endDate: order.endDate,
+      orderDate: order.orderDate,
+      orderImage: order.orderImage,
+      orderStatus: order.orderStatus,
+    };
   }
 }
 

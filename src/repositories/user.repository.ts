@@ -17,7 +17,7 @@ class UserRepository {
   async createUser(data: {
     email: string;
     password: string | null;
-    name: string | null;
+    name: string;
     phone: string | null;
     picture: string | null;
   }): Promise<User> {

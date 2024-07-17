@@ -8,26 +8,27 @@ datasource db {
 }
 
 model Album {
-  id           Int      @id @default(autoincrement())
-  productId    Int
-  productImage String?  @db.Text
+  id         Int      @id @default(autoincrement())
+  productId  Int
+  albumImage String?  @db.Text
 
-  product   Product     @relation(fields: [productId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
 }
 
 model Order {
-  id         Int       @id @default(autoincrement())
-  productId  Int
-  name       String
-  phone      String
-  email      String
-  address    String
-  usageDate  DateTime
-  orderDate  DateTime  @default(now())
-  orderImage String?   @db.Text
+  id          Int       @id @default(autoincrement())
+  productId   Int
+  userId      Int
+  address     String
+  startDate   DateTime
+  endDate     DateTime
+  orderDate   DateTime  @default(now())
+  orderImage  String?   @db.Text
+  orderStatus String?   @default("Pending")
 
-  product   Product    @relation(fields: [productId], references: [id])
-  reviews   Review[]
+  product     Product   @relation(fields: [productId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  items       Item[]
 }
 
 model Product {
@@ -38,35 +39,43 @@ model Product {
   category      String
   price         Float
   description   String?  @db.Text
-
+  productImage  String?  @db.Text
+  
   vendor        Vendor   @relation(fields: [vendorId], references: [id])
   albums        Album[]
+  items         Item[]
   orders        Order[]
 }
 
-model Review {
-  id         Int       @id @default(autoincrement())
-  orderId    Int
-  rating     Int
-  comment    String
-  reviewDate DateTime  @default(now())
+model Item {
+  id            Int        @id @default(autoincrement())
+  productId     Int
+  orderId       Int
+  reviewRating  Int?
+  reviewComment String?
+  reviewDate    DateTime?
 
-  order      Order     @relation(fields: [orderId], references: [id])
+  product       Product    @relation(fields: [productId], references: [id])
+  order         Order      @relation(fields: [orderId], references: [id])
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  password String?
-  name     String?
-  phone    String?
-  picture  String?  @db.Text
-  isAdmin  Boolean  @default(false)
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String?
+  name       String
+  phone      String?
+  picture    String?  @db.Text
+  isAdmin    Boolean  @default(false)
+  isVerified Boolean  @default(false)
+
+  orders     Order[]
 }
 
 model Vendor {
   id       Int      @id @default(autoincrement())
-  name     String   @unique
+  email    String   @unique
+  name     String
   phone    String
   address  String
   picture  String?  @db.Text

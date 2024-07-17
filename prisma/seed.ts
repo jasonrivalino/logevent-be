@@ -5,8 +5,9 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Delete all data
-  await prisma.review.deleteMany();
+  await prisma.item.deleteMany();
   await prisma.order.deleteMany();
+  await prisma.album.deleteMany();
   await prisma.product.deleteMany();
   await prisma.vendor.deleteMany();
   await prisma.user.deleteMany();
@@ -44,6 +45,7 @@ async function main() {
   for (let i = 0; i < vendorCount; i++) {
     const vendor = await prisma.vendor.create({
       data: {
+        email: `vendor${i+1}@gmail.com`,
         name: `Vendor ${i+1}`,
         phone: users[Math.floor(Math.random() * userCount)].phone!,
         address: `Vendor Address ${i+1}`,
@@ -77,24 +79,25 @@ async function main() {
     const order = await prisma.order.create({
       data: {
         productId: products[Math.floor(Math.random() * productCount)].id,
-        name: user.name!,
-        phone: user.phone!,
-        email: user.email!,
+        userId: user.id,
         address: `Order Address ${i+1}`,
-        usageDate: new Date(),
+        startDate: new Date(),
+        endDate: new Date(),
       },
     });
     orders.push(order);
   }
 
-  // Create 100 Reviews
-  const reviewCount = 100;
-  for (let i = 0; i < reviewCount; i++) {
-    await prisma.review.create({
+  // Create 100 Items
+  const itemCount = 100;
+  for (let i = 0; i < itemCount; i++) {
+    await prisma.item.create({
       data: {
+        productId: products[Math.floor(Math.random() * productCount)].id,
         orderId: orders[Math.floor(Math.random() * orderCount)].id,
-        rating: Math.floor(Math.random() * 5) + 1,
-        comment: `Comment ${i+1}`,
+        reviewRating: Math.floor(Math.random() * 5) + 1,
+        reviewComment: `Review Comment ${i+1}`,
+        reviewDate: new Date(),
       },
     });
   }

@@ -29,14 +29,15 @@ class ProductController {
 
   async createProduct(req: Request, res: Response) {
     try {
-      const { vendorId, name, specification, category, price, description } = req.body;
+      const { vendorId, name, specification, category, price, description, productImage } = req.body;
       const newProduct = await productRepository.createProduct({
         vendorId,
         name,
         specification,
         category,
         price,
-        description
+        description,
+        productImage
       });
 
       res.status(201).json(newProduct);
@@ -53,14 +54,15 @@ class ProductController {
         return res.status(404).json({ message: "Product not found" });
       }
 
-      const { vendorId, name, specification, category, price, description } = req.body;
+      const { vendorId, name, specification, category, price, description, productImage } = req.body;
       const updatedProduct = await productRepository.updateProduct(id, {
         vendorId: vendorId || product.vendorId,
         name: name || product.name,
         specification: specification || product.specification,
         category: category || product.category,
         price: price || product.price,
-        description: description || product.description
+        description: description || product.description,
+        productImage: productImage || product.productImage
       });
 
       res.status(200).json(updatedProduct);

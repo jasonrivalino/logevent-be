@@ -1,4 +1,6 @@
 import orderRepository from "../repositories/order.repository";
+import jwtUtils from "../utils/jwt";
+import nodemailerUtils from "../utils/nodemailer";
 import { Request, Response } from "express";
 import { Router } from "express";
 
@@ -28,18 +30,36 @@ class OrderController {
 
   async createOrder(req: Request, res: Response) {
     try {
-      const { productId, name, phone, email, address, usageDate, orderImage } = req.body;
+      const { productId, userId, address, startDate, endDate, orderImage } = req.body;
       const newOrder = await orderRepository.createOrder({
         productId,
-        name,
-        phone,
-        email,
+        userId,
         address,
-        usageDate,
+        startDate,
+        endDate,
         orderImage
       });
 
       res.status(201).json(newOrder);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async confirmOrder(req: Request, res: Response) {
+    try {
+      const { orderId } = req.body;
+      const order = await orderRepository.findOrderById(orderId);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      const userEmail = order.userEmail;
+      const userId = order.userId;
+      const token = jwtUtils.sign({ id: userId });
+      await nodemailerUtils.sendOrderConfirmationEmail(userEmail, orderId, token);
+
+      res.status(200).json({ message: "Order confirmed" });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -53,16 +73,16 @@ class OrderController {
         return res.status(404).json({ message: "Order not found" });
       }
 
-      const { productId, name, phone, email, address, usageDate, orderDate, orderImage } = req.body;
+      const { productId, userId, address, startDate, endDate, orderDate, orderImage, orderStatus } = req.body;
       const updatedOrder = await orderRepository.updateOrder(id, {
         productId: productId || order.productId,
-        name: name || order.name,
-        phone: phone || order.phone,
-        email: email || order.email,
+        userId: userId || order.userId,
         address: address || order.address,
-        usageDate: usageDate || order.usageDate,
+        startDate: startDate || order.startDate,
+        endDate: endDate || order.endDate,
         orderDate: orderDate || order.orderDate,
-        orderImage: orderImage || order.orderImage
+        orderImage: orderImage || order.orderImage,
+        orderStatus: orderStatus || order.orderStatus
       });
 
       res.status(200).json(updatedOrder);

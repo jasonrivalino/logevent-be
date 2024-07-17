@@ -4,6 +4,17 @@ interface CustomRequest extends Request {
   user: any;
 }
 
+interface ItemDetails {
+  id: number;
+  productId: number;
+  orderId: number;
+  userName: string;
+  userPicture: string | null;
+  reviewRating: number | null;
+  reviewComment: string | null;
+  reviewDate: Date | null;
+}
+
 interface ProductDetails {
   id: number;
   vendorId: number;
@@ -13,8 +24,24 @@ interface ProductDetails {
   category: string;
   price: number;
   description: string | null;
-  rating: number | null;
+  productImage: string | null;
+  rating: number;
   reviewCount: number;
 };
 
-export type { CustomRequest, ProductDetails };
+interface OrderDetails {
+  id: number;
+  productId: number;
+  userId: number;
+  userEmail: string;
+  userName: string;
+  userPhone: string | null;
+  address: string;
+  startDate: Date;
+  endDate: Date;
+  orderDate: Date;
+  orderImage: string | null;
+  orderStatus: string | null;
+};
+
+export type { CustomRequest, ItemDetails, ProductDetails, OrderDetails };

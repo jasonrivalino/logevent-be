@@ -11,10 +11,11 @@ class VendorRepository {
   }
 
   async findVendorByName(name: string): Promise<Vendor | null> {
-    return prisma.vendor.findUnique({ where: { name } });
+    return prisma.vendor.findFirst({ where: { name } });
   }
 
   async createVendor(data: {
+    email: string;
     name: string;
     phone: string;
     address: string;

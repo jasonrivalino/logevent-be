@@ -16,7 +16,7 @@ class AlbumRepository {
 
   async createAlbum(data: {
     productId: number;
-    productImage: string | null;
+    albumImage: string | null;
   }): Promise<Album> {
     return prisma.album.create({ data });
   }
