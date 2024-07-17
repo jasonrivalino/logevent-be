@@ -27,6 +27,16 @@ class AlbumController {
     }
   }
 
+  async readAlbumByProductId(req: Request, res: Response) {
+    try {
+      const productId = Number(req.params.productId);
+      const albums = await albumRepository.findAlbumsByProductId(productId);
+      res.status(200).json(albums);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async createAlbum(req: Request, res: Response) {
     try {
       const { productId, albumImage } = req.body;
@@ -80,6 +90,7 @@ class AlbumController {
     return Router()
       .get("/read", this.readAllAlbum)
       .get("/read/:id", this.readAlbumById)
+      .get("/read/product/:productId", this.readAlbumByProductId)
       .post("/create", this.createAlbum)
       .put("/update/:id", this.updateAlbum)
       .delete("/delete/:id", this.deleteAlbum);
