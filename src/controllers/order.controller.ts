@@ -30,14 +30,13 @@ class OrderController {
 
   async createOrder(req: Request, res: Response) {
     try {
-      const { productId, userId, address, startDate, endDate, orderImage } = req.body;
+      const { productId, userId, address, startDate, endDate } = req.body;
       const newOrder = await orderRepository.createOrder({
         productId,
         userId,
         address,
         startDate,
-        endDate,
-        orderImage
+        endDate
       });
 
       res.status(201).json(newOrder);

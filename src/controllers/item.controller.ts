@@ -37,6 +37,26 @@ class ItemController {
     }
   }
 
+  async readItemByOrderId(req: Request, res: Response) {
+    try {
+      const orderId = Number(req.params.orderId);
+      const items = await itemRepository.findItemsByOrderId(orderId);
+      res.status(200).json(items);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async readReviewByProductId(req: Request, res: Response) {
+    try {
+      const productId = Number(req.params.productId);
+      const reviews = await itemRepository.getReviewByProductId(productId);
+      res.status(200).json(reviews);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async createItem(req: Request, res: Response) {
     try {
       const { productId, orderId } = req.body;
@@ -96,6 +116,8 @@ class ItemController {
       .get("/read", this.readAllItem)
       .get("/read/:id", this.readItemById)
       .get("/read/product/:productId", this.readItemByProductId)
+      .get("/read/order/:orderId", this.readItemByOrderId)
+      .get("/read/review/:productId", this.readReviewByProductId)
       .post("/create", this.createItem)
       .put("/update/:id", this.updateItem)
       .delete("/delete/:id", this.deleteItem);

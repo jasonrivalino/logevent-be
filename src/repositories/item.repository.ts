@@ -55,6 +55,11 @@ class ItemRepository {
     return reviews.length;
   }
 
+  async getReviewByProductId(productId: number): Promise<ItemDetails[]> {
+    const items = await this.findItemsByProductId(productId);
+    return items.filter((item) => item.reviewRating !== null);
+  }
+
   async createItemDetails(item: Item): Promise<ItemDetails> {
     const order = await orderRepository.findOrderById(item.orderId);
     if (!order) {

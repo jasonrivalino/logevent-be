@@ -31,7 +31,6 @@ class OrderRepository {
     address: string;
     startDate: Date;
     endDate: Date;
-    orderImage: string | null;
   }): Promise<Order> {
     return prisma.order.create({ data });
   }
