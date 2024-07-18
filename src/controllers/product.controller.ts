@@ -12,6 +12,15 @@ class ProductController {
     }
   }
 
+  async readTopProducts(req: Request, res: Response) {
+    try {
+      const products = await productRepository.findTopProducts();
+      res.status(200).json(products);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async readProductById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
@@ -89,6 +98,7 @@ class ProductController {
   getRoutes() {
     return Router()
       .get("/read", this.readAllProduct)
+      .get("/read/top", this.readTopProducts)
       .get("/read/:id", this.readProductById)
       .post("/create", this.createProduct)
       .put("/update/:id", this.updateProduct)

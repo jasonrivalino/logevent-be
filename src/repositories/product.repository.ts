@@ -20,6 +20,22 @@ class ProductRepository {
     return prisma.product.findMany({ where: { category } });
   }
 
+  async findTopProducts(): Promise<ProductDetails[]> {
+    const products = await prisma.product.findMany();
+    const productDetailsPromises = products.map(async (product) => {
+      const productDetails = await this.createProductDetails(product);
+      const score = productDetails.rating * productDetails.reviewCount; // Step 3: Calculate the score
+      return {
+        ...productDetails,
+        score
+      };
+    });
+
+    const detailedProducts = await Promise.all(productDetailsPromises);
+    const sortedProducts = detailedProducts.sort((a, b) => b.score - a.score);
+    return sortedProducts.slice(0, 8);
+  }
+
   async createProduct(data: {
     vendorId: number;
     name: string;
