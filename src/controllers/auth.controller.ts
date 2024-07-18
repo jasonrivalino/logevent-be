@@ -202,7 +202,7 @@ class AuthController {
       const token = jwtUtils.sign({ id: user.id });
       const isVerified = user.isVerified;
       if (!isVerified) {
-        return res.redirect(`${process.env.REACT_APP_URL}/complete-profile?token=${token}`);
+        return res.redirect(`${process.env.REACT_APP_URL}/signup?token=${token}`);
       }
 
       return res.redirect(`${process.env.REACT_APP_URL}/google-callback?token=${token}`);
