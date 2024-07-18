@@ -41,14 +41,10 @@ class AuthController {
 
   async verifyEmail(req: Request, res: Response) {
     try {
-      const { token } = req.params;
-      const decoded = jwtUtils.verifyToken(token);
       const customReq = req as CustomRequest;
-      customReq.user = decoded;
-      
       const id = customReq.user.id;
       if (!id) {
-        return res.status(400).json({ message: "Invalid token" });
+        return res.status(400).json({ message: "User ID not found" });
       }
 
       const user = await userRepository.findUserById(id);
@@ -219,7 +215,7 @@ class AuthController {
     return Router()
       .get("/read", this.readAllUser)
       .get("/profile", authMiddleware.authenticate, this.userProfile)
-      .get("/verify/:token", this.verifyEmail)
+      .get("/verify", authMiddleware.authenticate, this.verifyEmail)
       .post("/signin", this.signIn)
       .post("/signup", this.signUp)
       .post("/reset-password", this.resetPassword)

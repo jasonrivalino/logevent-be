@@ -18,7 +18,7 @@ class NodemailerUtils {
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'Verify your email',
-      text: `Click on the link to verify your email: ${process.env.REACT_APP_URL}/verify-email?token=${token}`,
+      text: `Click on the link to verify your email: ${process.env.REACT_APP_URL}/email-verification?token=${token}`,
     };
 
     return this.sendMail(mailOptions);
