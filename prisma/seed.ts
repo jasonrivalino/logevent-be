@@ -89,7 +89,6 @@ async function main() {
     const user = users[Math.floor(Math.random() * userCount)];
     const order = await prisma.order.create({
       data: {
-        productId: products[Math.floor(Math.random() * productCount)].id,
         userId: user.id,
         address: `Order Address ${i+1}`,
         startDate: new Date(),
