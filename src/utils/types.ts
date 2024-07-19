@@ -31,7 +31,6 @@ interface ProductDetails {
 
 interface OrderDetails {
   id: number;
-  productId: number;
   userId: number;
   userEmail: string;
   userName: string;
@@ -40,7 +39,6 @@ interface OrderDetails {
   startDate: Date;
   endDate: Date;
   orderDate: Date;
-  orderImage: string | null;
   orderStatus: string | null;
 };
 

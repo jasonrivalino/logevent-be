@@ -15,18 +15,12 @@ class OrderRepository {
     return this.createOrderDetails(order);
   }
 
-  async findOrdersByProductId(productId: number): Promise<OrderDetails[]> {
-    const orders = await prisma.order.findMany({ where: { productId } });
-    return Promise.all(orders.map((order) => this.createOrderDetails(order)));
-  }
-
   async findOrdersByUserId(userId: number): Promise<OrderDetails[]> {
     const orders = await prisma.order.findMany({ where: { userId } });
     return Promise.all(orders.map((order) => this.createOrderDetails(order)));
   }
 
   async createOrder(data: {
-    productId: number;
     userId: number;
     address: string;
     startDate: Date;
@@ -51,7 +45,6 @@ class OrderRepository {
 
     return {
       id: order.id,
-      productId: order.productId,
       userId: order.userId,
       userEmail: user.email,
       userName: user.name,
@@ -60,7 +53,6 @@ class OrderRepository {
       startDate: order.startDate,
       endDate: order.endDate,
       orderDate: order.orderDate,
-      orderImage: order.orderImage,
       orderStatus: order.orderStatus,
     };
   }

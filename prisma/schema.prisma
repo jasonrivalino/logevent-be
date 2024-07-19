@@ -17,16 +17,13 @@ model Album {
 
 model Order {
   id          Int       @id @default(autoincrement())
-  productId   Int
   userId      Int
   address     String
   startDate   DateTime
   endDate     DateTime
   orderDate   DateTime  @default(now())
-  orderImage  String?   @db.Text
   orderStatus String?   @default("Pending")
 
-  product     Product   @relation(fields: [productId], references: [id])
   user        User      @relation(fields: [userId], references: [id])
   items       Item[]
 }
@@ -44,7 +41,6 @@ model Product {
   vendor        Vendor   @relation(fields: [vendorId], references: [id])
   albums        Album[]
   items         Item[]
-  orders        Order[]
 }
 
 model Item {

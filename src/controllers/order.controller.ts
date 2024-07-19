@@ -30,9 +30,8 @@ class OrderController {
 
   async createOrder(req: Request, res: Response) {
     try {
-      const { productId, userId, address, startDate, endDate } = req.body;
+      const { userId, address, startDate, endDate } = req.body;
       const newOrder = await orderRepository.createOrder({
-        productId,
         userId,
         address,
         startDate,
@@ -72,15 +71,13 @@ class OrderController {
         return res.status(404).json({ message: "Order not found" });
       }
 
-      const { productId, userId, address, startDate, endDate, orderDate, orderImage, orderStatus } = req.body;
+      const { userId, address, startDate, endDate, orderDate, orderStatus } = req.body;
       const updatedOrder = await orderRepository.updateOrder(id, {
-        productId: productId || order.productId,
         userId: userId || order.userId,
         address: address || order.address,
         startDate: startDate || order.startDate,
         endDate: endDate || order.endDate,
         orderDate: orderDate || order.orderDate,
-        orderImage: orderImage || order.orderImage,
         orderStatus: orderStatus || order.orderStatus
       });
 
