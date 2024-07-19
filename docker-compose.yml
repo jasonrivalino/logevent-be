@@ -53,8 +53,8 @@ services:
 
 volumes:
   db-data:
-  sonarqube_data:
-  sonarqube_extensions:
-  sonarqube_logs:
-  sonarqube_temp:
-  sonarqube_db:
+  # sonarqube_data:
+  # sonarqube_extensions:
+  # sonarqube_logs:
+  # sonarqube_temp:
+  # sonarqube_db:
