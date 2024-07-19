@@ -73,11 +73,18 @@ async function main() {
 
   // Create 100 Albums
   const albumCount = 100;
+  const images = [
+    "/Image/landingpage1.jpg",
+    "/Image/landingpage2.jpg",
+    "/Image/landingpage3.jpg",
+    "/Image/planetarium.jpg",
+    "/Image/partyevent.jpg"
+  ];
   for (let i = 0; i < albumCount; i++) {
     await prisma.album.create({
       data: {
         productId: products[Math.floor(Math.random() * productCount)].id,
-        albumImage: "https://via.placeholder.com/50",
+        albumImage: images[Math.floor(Math.random() * images.length)],
       },
     });
   }
