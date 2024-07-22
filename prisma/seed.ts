@@ -21,6 +21,7 @@ async function main() {
       name: 'Admin',
       phone: '1234567890',
       isAdmin: true,
+      isVerified: true,
     },
   });
 
@@ -34,6 +35,7 @@ async function main() {
         password: hashedPassword,
         name: `User ${i+1}`,
         phone: `123456789${i+1}`,
+        isVerified: true,
       },
     });
     users.push(user);
