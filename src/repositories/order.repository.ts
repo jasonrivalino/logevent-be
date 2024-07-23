@@ -13,6 +13,17 @@ class OrderRepository {
     return Promise.all(orders.map((order) => this.createOrderDetails(order)));
   }
 
+  async findPastMonthOrders(): Promise<OrderDetails[]> {
+    const orders = await prisma.order.findMany({
+      where: {
+        orderDate: {
+          gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+        },
+      },
+    });
+    return Promise.all(orders.map((order) => this.createOrderDetails(order)));
+  }
+
   async findOrderById(id: number): Promise<OrderDetails | null> {
     const order = await prisma.order.findUnique({ where: { id } });
     return order ? this.createOrderDetails(order) : null;

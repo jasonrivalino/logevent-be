@@ -43,6 +43,7 @@ model Product {
   vendor        Vendor   @relation(fields: [vendorId], references: [id])
   albums        Album[]
   items         Item[]
+  visits        Visit[]
 }
 
 model Item {
@@ -68,6 +69,7 @@ model User {
   isVerified Boolean  @default(false)
 
   orders     Order[]
+  visits     Visit[]
 }
 
 model Vendor {
@@ -79,4 +81,15 @@ model Vendor {
   picture  String?  @db.Text
 
   products Product[]
+}
+
+model Visit {
+  id        Int       @id @default(autoincrement())
+  userId    Int?
+  productId Int?
+  ipAddress String?
+  visitDate DateTime  @default(now())
+
+  user      User?     @relation(fields: [userId], references: [id])
+  product   Product?  @relation(fields: [productId], references: [id])
 }

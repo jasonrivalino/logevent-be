@@ -10,6 +10,7 @@ import itemController from './controllers/item.controller';
 import orderController from './controllers/order.controller';
 import productController from './controllers/product.controller';
 import vendorController from './controllers/vendor.controller';
+import visitController from './controllers/visit.controller';
 
 const app = express();
 const PORT = process.env.EXPRESS_APP_PORT;
@@ -26,6 +27,7 @@ app.use('/items', itemController.getRoutes());
 app.use('/orders', orderController.getRoutes());
 app.use('/products', productController.getRoutes());
 app.use('/vendors', vendorController.getRoutes());
+app.use('/visits', visitController.getRoutes());
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

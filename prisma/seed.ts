@@ -1,13 +1,14 @@
 // prisma/seed.ts
 
 // dependency modules
-import { Order, Product, User, Vendor, PrismaClient } from '@prisma/client';
+import { Order, Product, User, Vendor, Visit, PrismaClient } from '@prisma/client';
 import { hash } from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
   // Delete all data
+  await prisma.visit.deleteMany();
   await prisma.item.deleteMany();
   await prisma.order.deleteMany();
   await prisma.album.deleteMany();
@@ -105,6 +106,7 @@ async function main() {
         address: `Order Address ${i+1}`,
         startDate: new Date(),
         endDate: new Date(),
+        orderDate: getRandomDateWithinPast30Days()
       },
     });
     orders.push(order);
@@ -123,6 +125,26 @@ async function main() {
       },
     });
   }
+
+  // Create 100 Visits
+  const visitCount = 100;
+  for (let i = 0; i < visitCount; i++) {
+    await prisma.visit.create({
+      data: {
+        userId: users[Math.floor(Math.random() * userCount)].id,
+        productId: products[Math.floor(Math.random() * productCount)].id,
+        ipAddress: `192.168.1.${Math.floor(Math.random() * 256)}`,
+        visitDate: getRandomDateWithinPast30Days(),
+      },
+    });
+  }
+}
+
+function getRandomDateWithinPast30Days() {
+  const currentDate = new Date();
+  const past30Days = new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000));
+  const randomTime = past30Days.getTime() + Math.random() * (currentDate.getTime() - past30Days.getTime());
+  return new Date(randomTime);
 }
 
 main()
