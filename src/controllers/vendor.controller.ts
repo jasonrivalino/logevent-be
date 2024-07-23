@@ -1,6 +1,9 @@
+// src/controllers/vendor.controller.ts
+
+// dependency modules
+import { Request, Response, Router } from "express";
+// self-defined modules
 import vendorRepository from "../repositories/vendor.repository";
-import { Request, Response } from "express";
-import { Router } from "express";
 
 class VendorController {
   async readAllVendor(req: Request, res: Response) {

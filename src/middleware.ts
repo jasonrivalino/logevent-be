@@ -1,8 +1,12 @@
-import jwtUtils from "../utils/jwt";
-import { CustomRequest } from "../utils/types";
-import { Request, Response, NextFunction } from "express";
+// src/middleware.ts
 
-class AuthMiddleware {
+// dependency modules
+import { NextFunction, Request, Response } from "express";
+// self-defined modules
+import jwtUtils from "./utils/jwt";
+import { CustomRequest } from "./utils/types";
+
+class Middleware {
   async authenticate(req: Request, res: Response, next: NextFunction) {
     try {
       const authHeader = req.headers.authorization;
@@ -21,4 +25,4 @@ class AuthMiddleware {
   }
 }
 
-export default new AuthMiddleware();
+export default new Middleware();

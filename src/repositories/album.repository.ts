@@ -1,4 +1,8 @@
+// src/repositories/album.repository.ts
+
+// dependency modules
 import { Album } from "@prisma/client";
+// self-defined modules
 import prisma from "../utils/prisma";
 
 class AlbumRepository {

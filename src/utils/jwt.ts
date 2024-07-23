@@ -1,3 +1,6 @@
+// src/utils/jwt.ts
+
+// dependency modules
 import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
 
 class JwtUtils {

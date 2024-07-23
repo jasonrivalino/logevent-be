@@ -1,14 +1,17 @@
+// src/controllers/auth.controller.ts
+
+// dependency modules
+import { hash, compare } from "bcrypt";
+import { Request, Response, Router } from "express";
+import { google } from "googleapis";
+// self-defined modules
+import authMiddleware from "../middleware";
 import userRepository from "../repositories/user.repository";
-import authMiddleware from "../middlewares/auth.middleware";
 import cloudinaryUtils from "../utils/cloudinary";
 import jwtUtils from "../utils/jwt";
 import nodemailerUtils from "../utils/nodemailer";
-import { CustomRequest } from "../utils/types";
 import { oauth2Client, authorizationUrl } from "../utils/oauth";
-import { Request, Response } from "express";
-import { hash, compare } from "bcrypt";
-import { google } from "googleapis";
-import { Router } from "express";
+import { CustomRequest } from "../utils/types";
 
 class AuthController {
   async readAllUser(req: Request, res: Response) {

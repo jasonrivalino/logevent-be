@@ -1,3 +1,6 @@
+// src/utils/nodemailer.ts
+
+// dependency modules
 import nodemailer from 'nodemailer';
 
 class NodemailerUtils {

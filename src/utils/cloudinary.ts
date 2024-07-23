@@ -1,3 +1,6 @@
+// src/utils/cloudinary.ts
+
+// dependency modules
 import { v2 } from 'cloudinary';
 
 class CloudinaryUtils {

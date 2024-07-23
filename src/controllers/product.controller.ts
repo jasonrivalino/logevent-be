@@ -1,6 +1,9 @@
+// src/controllers/product.controller.ts
+
+// dependency modules
+import { Request, Response, Router } from "express";
+// self-defined modules
 import productRepository from "../repositories/product.repository";
-import { Request, Response } from "express";
-import { Router } from "express";
 
 class ProductController {
   async readAllProduct(req: Request, res: Response) {

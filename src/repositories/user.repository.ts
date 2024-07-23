@@ -1,4 +1,8 @@
+// src/repositories/user.repository.ts
+
+// dependency modules
 import { User } from "@prisma/client";
+// self-defined modules
 import prisma from "../utils/prisma";
 
 class UserRepository {

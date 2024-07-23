@@ -1,3 +1,6 @@
+// prisma/seed.ts
+
+// dependency modules
 import { Order, Product, User, Vendor, PrismaClient } from '@prisma/client';
 import { hash } from 'bcrypt';
 

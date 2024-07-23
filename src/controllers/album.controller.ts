@@ -1,6 +1,9 @@
+// src/controllers/album.controller.ts
+
+// dependency modules
+import { Request, Response, Router } from "express";
+// self-defined modules
 import albumRepository from "../repositories/album.repository";
-import { Request, Response } from "express";
-import { Router } from "express";
 
 class AlbumController {
   async readAllAlbum(req: Request, res: Response) {

@@ -1,4 +1,8 @@
+// src/repositories/vendor.repository.ts
+
+// dependency modules
 import { Vendor } from "@prisma/client";
+// self-defined modules
 import prisma from "../utils/prisma";
 
 class VendorRepository {

@@ -1,6 +1,9 @@
+// src/controllers/item.controller.ts
+
+// import dependency modules
+import { Request, Response, Router } from "express";
+// import self-defined modules
 import itemRepository from "../repositories/item.repository";
-import { Request, Response } from "express";
-import { Router } from "express";
 
 class ItemController {
   async readAllItem(req: Request, res: Response) {

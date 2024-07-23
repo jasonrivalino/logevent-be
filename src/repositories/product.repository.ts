@@ -1,6 +1,10 @@
+// src/repositories/product.repository.ts
+
+// dependency modules
 import { Product, Vendor } from "@prisma/client";
-import vendorRepository from "./vendor.repository";
+// self-defined modules
 import itemRepository from "./item.repository";
+import vendorRepository from "./vendor.repository";
 import prisma from "../utils/prisma";
 import { ProductDetails } from "../utils/types";
 

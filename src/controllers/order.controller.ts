@@ -1,8 +1,11 @@
+// src/controllers/order.controller.ts
+
+// dependency modules
+import { Request, Response, Router } from "express";
+// self-defined modules
 import orderRepository from "../repositories/order.repository";
 import jwtUtils from "../utils/jwt";
 import nodemailerUtils from "../utils/nodemailer";
-import { Request, Response } from "express";
-import { Router } from "express";
 
 class OrderController {
   async readAllOrder(req: Request, res: Response) {

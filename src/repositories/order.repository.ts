@@ -1,7 +1,11 @@
+// src/repositories/order.repository.ts
+
+// dependency modules
 import { Order } from "@prisma/client";
+// self-defined modules
 import userRepository from "./user.repository";
-import { OrderDetails } from "../utils/types";
 import prisma from "../utils/prisma";
+import { OrderDetails } from "../utils/types";
 
 class OrderRepository {
   async findAllOrders(): Promise<OrderDetails[]> {
