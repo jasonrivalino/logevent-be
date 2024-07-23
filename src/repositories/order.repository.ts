@@ -15,8 +15,7 @@ class OrderRepository {
 
   async findOrderById(id: number): Promise<OrderDetails | null> {
     const order = await prisma.order.findUnique({ where: { id } });
-    if (!order) return null;
-    return this.createOrderDetails(order);
+    return order ? this.createOrderDetails(order) : null;
   }
 
   async findOrdersByUserId(userId: number): Promise<OrderDetails[]> {

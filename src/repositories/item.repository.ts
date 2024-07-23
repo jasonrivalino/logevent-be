@@ -16,8 +16,7 @@ class ItemRepository {
 
   async findItemById(id: number): Promise<ItemDetails | null> {
     const item = await prisma.item.findUnique({ where: { id } });
-    if (!item) return null;
-    return this.createItemDetails(item);
+    return item ? this.createItemDetails(item) : null;
   }
 
   async findItemsByOrderId(orderId: number): Promise<ItemDetails[]> {

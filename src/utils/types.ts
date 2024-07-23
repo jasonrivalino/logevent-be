@@ -18,20 +18,6 @@ interface ItemDetails {
   reviewDate: Date | null;
 }
 
-interface ProductDetails {
-  id: number;
-  vendorId: number;
-  vendorAddress: string;
-  name: string;
-  specification: string;
-  category: string;
-  price: number;
-  description: string | null;
-  productImage: string | null;
-  rating: number;
-  reviewCount: number;
-};
-
 interface OrderDetails {
   id: number;
   userId: number;
@@ -45,4 +31,29 @@ interface OrderDetails {
   orderStatus: string | null;
 };
 
-export type { CustomRequest, ItemDetails, ProductDetails, OrderDetails };
+interface ProductDetails {
+  id: number;
+  vendorId: number;
+  vendorPhone: string;
+  vendorAddress: string;
+  name: string;
+  specification: string;
+  category: string;
+  price: number;
+  description: string | null;
+  productImage: string | null;
+  rating: number;
+  reviewCount: number;
+};
+
+interface VendorDetails {
+  id: number;
+  email: string;
+  name: string;
+  phone: string;
+  address: string;
+  picture: string | null;
+  productCount: number;
+};
+
+export type { CustomRequest, ItemDetails, OrderDetails, ProductDetails, VendorDetails };

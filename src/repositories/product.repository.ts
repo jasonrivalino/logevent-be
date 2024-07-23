@@ -16,19 +16,23 @@ class ProductRepository {
 
   async findProductById(id: number): Promise<ProductDetails | null> {
     const product = await prisma.product.findUnique({ where: { id } });
-    if (!product) return null;
-    return this.createProductDetails(product);
+    return product ? this.createProductDetails(product) : null;
   }
 
-  async findProductsByCategory(category: string): Promise<Product[]> {
-    return prisma.product.findMany({ where: { category } });
+  async findProductsByVendorId(vendorId: number): Promise<Product[]> {
+    return prisma.product.findMany({ where: { vendorId } });
+  }
+
+  async findProductsByCategory(category: string): Promise<ProductDetails[]> {
+    const products = await prisma.product.findMany({ where: { category } });
+    return Promise.all(products.map((product) => this.createProductDetails(product)));
   }
 
   async findTopProducts(): Promise<ProductDetails[]> {
     const products = await prisma.product.findMany();
     const productDetailsPromises = products.map(async (product) => {
       const productDetails = await this.createProductDetails(product);
-      const score = productDetails.rating * productDetails.reviewCount; // Step 3: Calculate the score
+      const score = productDetails.rating * productDetails.reviewCount;
       return {
         ...productDetails,
         score
@@ -36,9 +40,11 @@ class ProductRepository {
     });
 
     const detailedProducts = await Promise.all(productDetailsPromises);
-    const sortedProducts = detailedProducts.sort((a, b) => b.score - a.score);
+    const filteredProducts = detailedProducts.filter(product => product.rating > 4.0);
+    const sortedProducts = filteredProducts.sort((a, b) => b.score - a.score);
     return sortedProducts.slice(0, 8);
   }
+  
 
   async createProduct(data: {
     vendorId: number;
@@ -67,6 +73,7 @@ class ProductRepository {
     return {
       id: product.id,
       vendorId: product.vendorId,
+      vendorPhone: vendor.phone,
       vendorAddress: vendor.address,
       name: product.name,
       specification: product.specification,
