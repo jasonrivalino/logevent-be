@@ -36,9 +36,10 @@ interface ProductDetails {
   vendorId: number;
   vendorPhone: string;
   vendorAddress: string;
+  categoryId: number;
+  categoryName: string;
   name: string;
   specification: string;
-  category: string;
   price: number;
   description: string | null;
   productImage: string | null;
@@ -52,7 +53,11 @@ interface VendorDetails {
   name: string;
   phone: string;
   address: string;
-  picture: string | null;
+  instagram: string | null;
+  socialMedia: string | null;
+  documentUrl: string;
+  joinDate: Date;
+  isDeleted: boolean;
   productCount: number;
 };
 

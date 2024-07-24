@@ -1,8 +1,9 @@
 // src/repositories/product.repository.ts
 
 // dependency modules
-import { Product, Vendor } from "@prisma/client";
+import { Category, Product, Vendor } from "@prisma/client";
 // self-defined modules
+import categoryRepository from "./category.repository";
 import itemRepository from "./item.repository";
 import vendorRepository from "./vendor.repository";
 import prisma from "../utils/prisma";
@@ -21,11 +22,6 @@ class ProductRepository {
 
   async findProductsByVendorId(vendorId: number): Promise<Product[]> {
     return prisma.product.findMany({ where: { vendorId } });
-  }
-
-  async findProductsByCategory(category: string): Promise<ProductDetails[]> {
-    const products = await prisma.product.findMany({ where: { category } });
-    return Promise.all(products.map((product) => this.createProductDetails(product)));
   }
 
   async findTopProducts(): Promise<ProductDetails[]> {
@@ -48,10 +44,12 @@ class ProductRepository {
 
   async createProduct(data: {
     vendorId: number;
+    categoryId: number;
     name: string;
     specification: string;
-    category: string;
+    rate: string;
     price: number;
+    capacity: number | null;
     description: string | null;
     productImage: string | null;
   }): Promise<Product> {
@@ -68,6 +66,7 @@ class ProductRepository {
 
   async createProductDetails(product: Product): Promise<ProductDetails> {
     const vendor = await vendorRepository.findVendorById(product.vendorId) as Vendor;
+    const category = await categoryRepository.findCategoryById(product.categoryId) as Category;
     const productRating = await itemRepository.getAverageRatingByProductId(product.id);
     const productReviewCount = await itemRepository.getReviewCountByProductId(product.id);
     return {
@@ -75,9 +74,10 @@ class ProductRepository {
       vendorId: product.vendorId,
       vendorPhone: vendor.phone,
       vendorAddress: vendor.address,
+      categoryId: product.categoryId,
+      categoryName: category.name,
       name: product.name,
       specification: product.specification,
-      category: product.category,
       price: product.price,
       description: product.description,
       productImage: product.productImage,

@@ -10,30 +10,20 @@ class VisitRepository {
     return prisma.visit.findMany();
   }
 
-  async findVisitById(id: number): Promise<Visit | null> {
-    return prisma.visit.findUnique({ where: { id } });
-  }
-
-  async findPastMonthVisits(): Promise<Visit[]> {
+  async findPastWeekVisits(chosenDate: Date): Promise<Visit[]> {    
     return prisma.visit.findMany({
       where: {
         visitDate: {
-          gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+          gte: new Date(chosenDate.getTime() - 7 * 24 * 60 * 60 * 1000),
         },
       },
     });
   }
 
   async createVisit(data: {
-    userId: number | null;
-    productId: number | null;
     ipAddress: string | null;
   }): Promise<Visit> {
     return prisma.visit.create({ data });
-  }
-
-  async deleteVisit(id: number): Promise<Visit> {
-    return prisma.visit.delete({ where: { id } });
   }
 }
 

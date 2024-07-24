@@ -8,19 +8,28 @@ import prisma from "../utils/prisma";
 import { VendorDetails } from "../utils/types";
 
 class VendorRepository {
-  async findAllVendors(): Promise<VendorDetails[]> {
-    const vendors = await prisma.vendor.findMany();
+  async findAllVendors(): Promise<Vendor[]> {
+    return prisma.vendor.findMany();
+  }
+
+  async findAllVendorDetails(): Promise<VendorDetails[]> {
+    const vendors = await prisma.vendor.findMany({ where: { isDeleted: false } });
     return Promise.all(vendors.map((vendor) => this.createVendorDetails(vendor)));
   }
 
-  async findVendorById(id: number): Promise<VendorDetails | null> {
-    const vendor = await prisma.vendor.findUnique({ where: { id } });
-    return vendor ? this.createVendorDetails(vendor) : null;
+  async findVendorById(id: number): Promise<Vendor | null> {
+    return prisma.vendor.findUnique({ where: { id } });
   }
 
-  async findVendorByName(name: string): Promise<VendorDetails | null> {
-    const vendor = await prisma.vendor.findFirst({ where: { name } });
-    return vendor ? this.createVendorDetails(vendor) : null
+  async findVendorDetailById(id: number): Promise<VendorDetails | null> {
+    const vendor = await prisma.vendor.findUnique({ 
+      where: { 
+        id,
+        isDeleted: false
+      } 
+    });
+
+    return vendor ? this.createVendorDetails(vendor) : null;
   }
 
   async createVendor(data: {
@@ -28,7 +37,9 @@ class VendorRepository {
     name: string;
     phone: string;
     address: string;
-    picture: string | null;
+    instagram: string | null;
+    socialMedia: string | null;
+    documentUrl: string;
   }): Promise<Vendor> {
     return prisma.vendor.create({ data });
   }
@@ -49,7 +60,11 @@ class VendorRepository {
       name: vendor.name,
       phone: vendor.phone,
       address: vendor.address,
-      picture: vendor.picture,
+      instagram: vendor.instagram,
+      socialMedia: vendor.socialMedia,
+      documentUrl: vendor.documentUrl,
+      joinDate: vendor.joinDate,
+      isDeleted: vendor.isDeleted,
       productCount: products.length,
     };
   }

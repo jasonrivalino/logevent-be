@@ -8,7 +8,7 @@ import vendorRepository from "../repositories/vendor.repository";
 class VendorController {
   async readAllVendor(req: Request, res: Response) {
     try {
-      const vendors = await vendorRepository.findAllVendors();
+      const vendors = await vendorRepository.findAllVendorDetails();
       res.status(200).json(vendors);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -18,7 +18,7 @@ class VendorController {
   async readVendorById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const vendor = await vendorRepository.findVendorById(id);
+      const vendor = await vendorRepository.findVendorDetailById(id);
       if (!vendor) {
         return res.status(404).json({ message: "Vendor not found" });
       }
@@ -31,13 +31,15 @@ class VendorController {
 
   async createVendor(req: Request, res: Response) {
     try {
-      const { email, name, phone, address, picture } = req.body;
+      const { email, name, phone, address, instagram, socialMedia, documentUrl } = req.body;
       const newVendor = await vendorRepository.createVendor({
         email,
         name,
         phone,
         address,
-        picture
+        instagram,
+        socialMedia,
+        documentUrl
       });
 
       res.status(201).json(newVendor);
@@ -54,13 +56,15 @@ class VendorController {
         return res.status(404).json({ message: "Vendor not found" });
       }
 
-      const { email, name, phone, address, picture } = req.body;
+      const { email, name, phone, address, instagram, socialMedia, documentUrl } = req.body;
       const updatedVendor = await vendorRepository.updateVendor(id, {
         email: email || vendor.email,
         name: name || vendor.name,
         phone: phone || vendor.phone,
         address: address || vendor.address,
-        picture: picture || vendor.picture
+        instagram: instagram || vendor.instagram,
+        socialMedia: socialMedia || vendor.socialMedia,
+        documentUrl: documentUrl || vendor.documentUrl
       });
 
       res.status(200).json(updatedVendor);
