@@ -17,45 +17,114 @@ model Album {
   product    Product  @relation(fields: [productId], references: [id])
 }
 
+model Bundle {
+  id        Int      @id @default(autoincrement())
+  eventId   Int
+  productId Int
+
+  event     Event    @relation(fields: [eventId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Cart {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  type       String
+  cartDate   DateTime @default(now())
+  cartStatus String   @default("Active")
+
+  user       User     @relation(fields: [userId], references: [id])
+  items      Item[]
+  orders     Order[]
+}
+
+model Category {
+  id       Int        @id @default(autoincrement())
+  name     String
+  type     String
+
+  events   Event[]
+  products Product[]
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  categoryId  Int
+  name        String
+  rate        String
+  price       Float
+  capacity    Int?
+  description String?  @db.Text
+  eventImage  String?  @db.Text
+  isDeleted   Boolean  @default(false)
+
+  category    Category @relation(fields: [categoryId], references: [id])
+  bundles     Bundle[]
+  items       Item[]
+}
+
+model Faq {
+  id         Int      @id @default(autoincrement())
+  question   String
+  answer     String
+}
+
 model Order {
   id          Int       @id @default(autoincrement())
-  userId      Int
+  cartId      Int
+  name        String
+  phone       String
   address     String
+  notes       String?   @db.Text
   startDate   DateTime
   endDate     DateTime
   orderDate   DateTime  @default(now())
-  orderStatus String?   @default("Pending")
+  orderStatus String    @default("Pending")
 
-  user        User      @relation(fields: [userId], references: [id])
-  items       Item[]
+  cart        Cart      @relation(fields: [cartId], references: [id])
 }
 
 model Product {
   id            Int      @id @default(autoincrement())
   vendorId      Int
+  categoryId    Int
   name          String
   specification String
-  category      String
+  rate          String
   price         Float
+  capacity      Int?
   description   String?  @db.Text
   productImage  String?  @db.Text
+  isDeleted     Boolean  @default(false)
   
   vendor        Vendor   @relation(fields: [vendorId], references: [id])
+  category      Category @relation(fields: [categoryId], references: [id])
   albums        Album[]
+  bundles       Bundle[]
   items         Item[]
-  visits        Visit[]
 }
 
 model Item {
   id            Int        @id @default(autoincrement())
-  productId     Int
-  orderId       Int
-  reviewRating  Int?
-  reviewComment String?
-  reviewDate    DateTime?
+  eventId       Int?
+  productId     Int?
+  cartId        Int
+  type          String
 
-  product       Product    @relation(fields: [productId], references: [id])
-  order         Order      @relation(fields: [orderId], references: [id])
+  event         Event?     @relation(fields: [eventId], references: [id])
+  product       Product?   @relation(fields: [productId], references: [id])
+  cart          Cart       @relation(fields: [cartId], references: [id])
+  reviews       Review[]
+}
+
+model Review {
+  id         Int       @id @default(autoincrement())
+  itemId     Int
+  rating     Int
+  comment    String
+  reviewDate DateTime  @default(now())
+
+  item       Item      @relation(fields: [itemId], references: [id])
 }
 
 model User {
@@ -68,28 +137,26 @@ model User {
   isAdmin    Boolean  @default(false)
   isVerified Boolean  @default(false)
 
-  orders     Order[]
-  visits     Visit[]
+  carts      Cart[]
 }
 
 model Vendor {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  name     String
-  phone    String
-  address  String
-  picture  String?  @db.Text
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  name        String
+  phone       String
+  address     String
+  instagram   String?
+  socialMedia String?
+  documentUrl String
+  joinDate    DateTime  @default(now())
+  isDeleted   Boolean   @default(false)
 
   products Product[]
 }
 
 model Visit {
   id        Int       @id @default(autoincrement())
-  userId    Int?
-  productId Int?
   ipAddress String?
   visitDate DateTime  @default(now())
-
-  user      User?     @relation(fields: [userId], references: [id])
-  product   Product?  @relation(fields: [productId], references: [id])
 }
