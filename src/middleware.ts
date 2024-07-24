@@ -28,11 +28,7 @@ class Middleware {
   visitRateLimit = rateLimit({
     windowMs: 24 * 60 * 60 * 1000,
     max: 1,
-    message: 'You have already recorded a visit today',
-    keyGenerator: (req: Request) => {
-      const productId = req.body.productId;
-      return `${req.ip}-${productId}`;
-    }
+    message: 'You have already recorded a visit today'
   });
 }
 

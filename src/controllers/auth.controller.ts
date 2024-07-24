@@ -5,7 +5,7 @@ import { hash, compare } from "bcrypt";
 import { Request, Response, Router } from "express";
 import { google } from "googleapis";
 // self-defined modules
-import authMiddleware from "../middleware";
+import middleware from "../middleware";
 import userRepository from "../repositories/user.repository";
 import cloudinaryUtils from "../utils/cloudinary";
 import jwtUtils from "../utils/jwt";
@@ -217,12 +217,12 @@ class AuthController {
   getRoutes() {
     return Router()
       .get("/read", this.readAllUser)
-      .get("/profile", authMiddleware.authenticate, this.userProfile)
-      .get("/verify", authMiddleware.authenticate, this.verifyEmail)
+      .get("/profile", middleware.authenticate, this.userProfile)
+      .get("/verify", middleware.authenticate, this.verifyEmail)
       .post("/signin", this.signIn)
       .post("/signup", this.signUp)
       .post("/reset-password", this.resetPassword)
-      .put("/update", authMiddleware.authenticate, this.updateUser)
+      .put("/update", middleware.authenticate, this.updateUser)
       .get("/google", this.googleAuth)
       .get("/google/callback", this.googleAuthCallback);
   }
