@@ -44,7 +44,7 @@ class VisitController {
   getRoutes() {
     return Router()
       .get("/read", this.readAllVisits)
-      .get("/read/past-month", this.readPastWeekVisits)
+      .get("/read/past-week", this.readPastWeekVisits)
       .post("/create", middleware.visitRateLimit, this.createVisit)
   }
 }

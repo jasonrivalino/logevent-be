@@ -8,17 +8,28 @@ import { ProductDetail } from "../utils/types";
 
 class ProductRepository {
   async findAllProducts(): Promise<Product[]> {
-    return prisma.product.findMany({ where: { isDeleted: false } });
+    return prisma.product.findMany({ 
+      where: { 
+        id: { not: 1 },
+        isDeleted: false
+      }
+     });
   }
 
   async findAllProductDetails(): Promise<ProductDetail[]> {
-    const products = await prisma.product.findMany({ where: { isDeleted: false } });
+    const products = await prisma.product.findMany({ 
+      where: { 
+        id: { not: 1 },
+        isDeleted: false
+      }
+     });
     return Promise.all(products.map((product) => this.createProductDetail(product)));
   }
 
   async findProductsByVendorId(vendorId: number): Promise<Product[]> {
     return prisma.product.findMany({ 
       where: { 
+        id: { not: 1 },
         vendorId,
         isDeleted: false
       }
@@ -28,6 +39,7 @@ class ProductRepository {
   async findProductDetailsByVendorId(vendorId: number): Promise<ProductDetail[]> {
     const products = await prisma.product.findMany({ 
       where: { 
+        id: { not: 1 },
         vendorId,
         isDeleted: false
       }
@@ -55,7 +67,12 @@ class ProductRepository {
   }
 
   async getTopProductDetails(): Promise<ProductDetail[]> {
-    const products = await prisma.product.findMany({ where: { isDeleted: false } });
+    const products = await prisma.product.findMany({ 
+      where: { 
+        id: { not: 1 },
+        isDeleted: false
+      }
+     });
     const productDetailsPromises = products.map(async (product) => {
       const productDetails = await this.createProductDetail(product);
       const score = productDetails.rating * productDetails.reviewCount;
