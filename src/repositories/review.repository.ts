@@ -14,6 +14,7 @@ class ReviewRepository {
     itemId: number;
     rating: number;
     comment: string;
+    tag: string | null;
     reviewDate: Date;
   }): Promise<Review> {
     return prisma.review.create({ data });
