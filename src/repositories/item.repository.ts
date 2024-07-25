@@ -16,6 +16,15 @@ class ItemRepository {
     return Promise.all(items.map(item => this.createItemDetail(item)));
   }
 
+  async findItemsByCartId(cartId: number): Promise<Item[]> {
+    return prisma.item.findMany({ where: { cartId } });
+  }
+
+  async findItemDetailsByCartId(cartId: number): Promise<ItemDetail[]> {
+    const items = await prisma.item.findMany({ where: { cartId } });
+    return Promise.all(items.map(item => this.createItemDetail(item)));
+  }
+
   async findItemById(id: number): Promise<Item | null> {
     return prisma.item.findUnique({ where: { id } });
   }
