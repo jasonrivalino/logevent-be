@@ -102,8 +102,8 @@ async function main() {
       phone: '1234567890',
       address: 'Event Organizer Order Address',
       notes: 'Event Organizer Order Notes',
-      startDate: getRandomDateWithinPast30Days(),
-      endDate: getRandomDateWithinPast30Days()
+      startDate: getRandomDateWithinPastTwoMonth(),
+      endDate: getRandomDateWithinPastTwoMonth()
     },
   });
 
@@ -327,8 +327,9 @@ async function main() {
         phone: `123456789${i+1}`,
         address: `Order ${i+1} Address`,
         notes: `Order ${i+1} Notes`,
-        startDate: getRandomDateWithinPast30Days(),
-        endDate: getRandomDateWithinPast30Days()
+        startDate: getRandomDateWithinPastTwoMonth(),
+        endDate: getRandomDateWithinPastTwoMonth(),
+        orderDate: getRandomDateWithinPastTwoMonth(),
       },
     });
   }
@@ -376,16 +377,23 @@ async function main() {
     await prisma.visit.create({
       data: {
         ipAddress: `192.168.1.${Math.floor(Math.random() * 256)}`,
-        visitDate: getRandomDateWithinPast30Days(),
+        visitDate: getRandomDateWithinPastWeek(),
       },
     });
   }
 }
 
-function getRandomDateWithinPast30Days() {
+function getRandomDateWithinPastWeek() {
   const currentDate = new Date();
-  const past30Days = new Date(currentDate.getTime() - (30 * 24 * 60 * 60 * 1000));
-  const randomTime = past30Days.getTime() + Math.random() * (currentDate.getTime() - past30Days.getTime());
+  const pastWeek = new Date(currentDate.getTime() - (7 * 24 * 60 * 60 * 1000));
+  const randomTime = pastWeek.getTime() + Math.random() * (currentDate.getTime() - pastWeek.getTime());
+  return new Date(randomTime);
+}
+
+function getRandomDateWithinPastTwoMonth() {
+  const currentDate = new Date();
+  const pastTwoMonth = new Date(currentDate.getTime() - (60 * 24 * 60 * 60 * 1000));
+  const randomTime = pastTwoMonth.getTime() + Math.random() * (currentDate.getTime() - pastTwoMonth.getTime());
   return new Date(randomTime);
 }
 

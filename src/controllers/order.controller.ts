@@ -126,7 +126,7 @@ class OrderController {
   getRoutes() {
     return Router()
       .get("/read", this.readAllOrders)
-      .get("/read/past-month/:date", this.readPastTwoMonthOrders)
+      .get("/read/past-two-month/:date", this.readPastTwoMonthOrders)
       .get("/read/:id", this.readOrderById)
       .post("/create", this.createOrder)
       .put("/update/:id", this.updateOrder)
