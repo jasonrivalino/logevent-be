@@ -18,12 +18,12 @@ class VisitController {
 
   async readPastWeekVisits(req: Request, res: Response) {
     try {
-      const { chosenDate } = req.query;
+      const chosenDate = req.params.chosenDate;
       if (!chosenDate) {
         return res.status(400).json({ message: "Please provide a date" });
       }
 
-      const visits = await visitRepository.findPastWeekVisits(new Date(chosenDate as string));
+      const visits = await visitRepository.findPastWeekVisits(new Date(chosenDate));
       res.status(200).json(visits);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -44,7 +44,7 @@ class VisitController {
   getRoutes() {
     return Router()
       .get("/read", this.readAllVisits)
-      .get("/read/past-week", this.readPastWeekVisits)
+      .get("/read/past-week/:date", this.readPastWeekVisits)
       .post("/create", middleware.visitRateLimit, this.createVisit)
   }
 }
