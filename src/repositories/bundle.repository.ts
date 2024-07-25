@@ -18,6 +18,10 @@ class BundleRepository {
     return prisma.bundle.findMany({ where: { productId } });
   }
 
+  async findBundlesByEventId(eventId: number): Promise<Bundle[]> {
+    return prisma.bundle.findMany({ where: { eventId } });
+  }
+
   async createBundle(data: {
     eventId: number;
     productId: number;

@@ -6,9 +6,29 @@ import { Request, Response, Router } from "express";
 import reviewRepository from "../repositories/review.repository";
 
 class ReviewController {
-  async readAllReview(req: Request, res: Response) {
+  async readAllReviews(req: Request, res: Response) {
     try {
-      const reviews = await reviewRepository.findAllReviews();
+      const reviews = await reviewRepository.findAllReviewDetails();
+      res.status(200).json(reviews);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async readReviewsByEventId(req: Request, res: Response) {
+    try {
+      const eventId = Number(req.params.eventId);
+      const reviews = await reviewRepository.findReviewDetailsByEventId(eventId);
+      res.status(200).json(reviews);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async readReviewsByProductId(req: Request, res: Response) {
+    try {
+      const productId = Number(req.params.productId);
+      const reviews = await reviewRepository.findReviewDetailsByProductId(productId);
       res.status(200).json(reviews);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -34,7 +54,9 @@ class ReviewController {
 
   getRoutes() {
     return Router()
-      .get("/read", this.readAllReview)
+      .get("/read", this.readAllReviews)
+      .get("/read/event/:eventId", this.readReviewsByEventId)
+      .get("/read/product/:productId", this.readReviewsByProductId)
       .post("/create", this.createReview)
   }
 }

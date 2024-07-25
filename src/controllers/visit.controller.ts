@@ -7,7 +7,7 @@ import middleware from "../middleware";
 import visitRepository from "../repositories/visit.repository";
 
 class VisitController {
-  async readAllVisit(req: Request, res: Response) {
+  async readAllVisits(req: Request, res: Response) {
     try {
       const visits = await visitRepository.findAllVisits();
       res.status(200).json(visits);
@@ -16,7 +16,7 @@ class VisitController {
     }
   }
 
-  async readPastWeekVisit(req: Request, res: Response) {
+  async readPastWeekVisits(req: Request, res: Response) {
     try {
       const { chosenDate } = req.query;
       if (!chosenDate) {
@@ -43,8 +43,8 @@ class VisitController {
 
   getRoutes() {
     return Router()
-      .get("/read", this.readAllVisit)
-      .get("/read/past-month", this.readPastWeekVisit)
+      .get("/read", this.readAllVisits)
+      .get("/read/past-month", this.readPastWeekVisits)
       .post("/create", middleware.visitRateLimit, this.createVisit)
   }
 }

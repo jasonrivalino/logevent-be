@@ -3,25 +3,29 @@
 // dependency modules
 import { Vendor } from "@prisma/client";
 // self-defined modules
-import productRepository from "./product.repository";
 import prisma from "../utils/prisma";
-import { VendorDetails } from "../utils/types";
+import { VendorDetail } from "../utils/types";
 
 class VendorRepository {
   async findAllVendors(): Promise<Vendor[]> {
-    return prisma.vendor.findMany();
+    return prisma.vendor.findMany({ where: { isDeleted: false } });
   }
 
-  async findAllVendorDetails(): Promise<VendorDetails[]> {
+  async findAllVendorDetails(): Promise<VendorDetail[]> {
     const vendors = await prisma.vendor.findMany({ where: { isDeleted: false } });
-    return Promise.all(vendors.map((vendor) => this.createVendorDetails(vendor)));
+    return Promise.all(vendors.map((vendor) => this.createVendorDetail(vendor)));
   }
 
   async findVendorById(id: number): Promise<Vendor | null> {
-    return prisma.vendor.findUnique({ where: { id } });
+    return prisma.vendor.findUnique({ 
+      where: { 
+        id,
+        isDeleted: false
+      } 
+     });
   }
 
-  async findVendorDetailById(id: number): Promise<VendorDetails | null> {
+  async findVendorDetailById(id: number): Promise<VendorDetail | null> {
     const vendor = await prisma.vendor.findUnique({ 
       where: { 
         id,
@@ -29,7 +33,7 @@ class VendorRepository {
       } 
     });
 
-    return vendor ? this.createVendorDetails(vendor) : null;
+    return vendor ? this.createVendorDetail(vendor) : null;
   }
 
   async createVendor(data: {
@@ -49,11 +53,12 @@ class VendorRepository {
   }
 
   async deleteVendor(id: number): Promise<Vendor> {
-    return prisma.vendor.delete({ where: { id } });
+    return prisma.vendor.update({ where: { id }, data: { isDeleted: true } });
   }
 
-  async createVendorDetails(vendor: Vendor): Promise<VendorDetails> {
-    const products = await productRepository.findProductsByVendorId(vendor.id);
+  async createVendorDetail(vendor: Vendor): Promise<VendorDetail> {
+    const products = await prisma.product.findMany({ where: { vendorId: vendor.id } });
+    
     return {
       id: vendor.id,
       email: vendor.email,

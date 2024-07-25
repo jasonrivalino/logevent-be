@@ -38,12 +38,12 @@ class NodemailerUtils {
     return this.sendMail(mailOptions);
   }
 
-  async sendOrderConfirmationEmail(email: string, orderId: number, token: string) {
+  async sendNewOrderEmail(email: string, orderId: number, token: string) {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'Order confirmation',
-      text: `Your order with id ${orderId} has been confirmed. Click on the link to view your order: ${process.env.REACT_APP_URL}/order/${orderId}?token=${token}`,
+      text: `Your order with id ${orderId} is recorded. Click on the link to view your order: ${process.env.REACT_APP_URL}/order/${orderId}?token=${token}`,
     };
 
     return this.sendMail(mailOptions);

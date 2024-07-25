@@ -29,6 +29,18 @@ class CloudinaryUtils {
       );
     });
   }
+
+  async deleteFile(publicId: string) {
+    return new Promise<void>((resolve, reject) => {
+      this.cloudinary.uploader.destroy(publicId, (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
 }
 
 export default new CloudinaryUtils();

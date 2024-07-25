@@ -6,9 +6,9 @@ import { Request, Response, Router } from "express";
 import productRepository from "../repositories/product.repository";
 
 class ProductController {
-  async readAllProduct(req: Request, res: Response) {
+  async readAllProducts(req: Request, res: Response) {
     try {
-      const products = await productRepository.findAllProducts();
+      const products = await productRepository.findAllProductDetails();
       res.status(200).json(products);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -17,7 +17,7 @@ class ProductController {
 
   async readTopProducts(req: Request, res: Response) {
     try {
-      const products = await productRepository.findTopProducts();
+      const products = await productRepository.getTopProductDetails();
       res.status(200).json(products);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -27,7 +27,7 @@ class ProductController {
   async readProductById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const product = await productRepository.findProductById(id);
+      const product = await productRepository.findProductDetailById(id);
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
       }
@@ -41,13 +41,15 @@ class ProductController {
 
   async createProduct(req: Request, res: Response) {
     try {
-      const { vendorId, name, specification, category, price, description, productImage } = req.body;
+      const { vendorId, categoryId, name, specification, rate, price, capacity, description, productImage } = req.body;
       const newProduct = await productRepository.createProduct({
         vendorId,
+        categoryId,
         name,
         specification,
-        category,
+        rate,
         price,
+        capacity,
         description,
         productImage
       });
@@ -66,13 +68,15 @@ class ProductController {
         return res.status(404).json({ message: "Product not found" });
       }
 
-      const { vendorId, name, specification, category, price, description, productImage } = req.body;
+      const { vendorId, categoryId, name, specification, rate, price, capacity, description, productImage } = req.body;
       const updatedProduct = await productRepository.updateProduct(id, {
         vendorId: vendorId || product.vendorId,
+        categoryId: categoryId || product.categoryId,
         name: name || product.name,
         specification: specification || product.specification,
-        category: category || product.category,
+        rate: rate || product.rate,
         price: price || product.price,
+        capacity: capacity || product.capacity,
         description: description || product.description,
         productImage: productImage || product.productImage
       });
@@ -92,7 +96,7 @@ class ProductController {
       }
 
       await productRepository.deleteProduct(id);
-      res.status(204).json(product);
+      res.status(204).end();
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -100,7 +104,7 @@ class ProductController {
 
   getRoutes() {
     return Router()
-      .get("/read", this.readAllProduct)
+      .get("/read", this.readAllProducts)
       .get("/read/top", this.readTopProducts)
       .get("/read/:id", this.readProductById)
       .post("/create", this.createProduct)

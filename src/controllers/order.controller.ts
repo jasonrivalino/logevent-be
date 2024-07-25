@@ -3,14 +3,16 @@
 // dependency modules
 import { Request, Response, Router } from "express";
 // self-defined modules
+import cartRepository from "../repositories/cart.repository";
 import orderRepository from "../repositories/order.repository";
+import userRepository from "../repositories/user.repository";
 import jwtUtils from "../utils/jwt";
 import nodemailerUtils from "../utils/nodemailer";
 
 class OrderController {
-  async readAllOrder(req: Request, res: Response) {
+  async readAllOrders(req: Request, res: Response) {
     try {
-      const orders = await orderRepository.findAllOrders();
+      const orders = await orderRepository.findAllOrderDetails();
       res.status(200).json(orders);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -19,7 +21,7 @@ class OrderController {
 
   async readPastMonthOrders(req: Request, res: Response) {
     try {
-      const orders = await orderRepository.findPastMonthOrders();
+      const orders = await orderRepository.findPastMonthOrderDetails();
       res.status(200).json(orders);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -29,7 +31,7 @@ class OrderController {
   async readOrderById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const order = await orderRepository.findOrderById(id);
+      const order = await orderRepository.findOrderDetailById(id);
       if (!order) {
         return res.status(404).json({ message: "Order not found" });
       }
@@ -42,34 +44,33 @@ class OrderController {
 
   async createOrder(req: Request, res: Response) {
     try {
-      const { userId, address, startDate, endDate } = req.body;
+      const { cartId, name, phone, address, notes, startDate, endDate } = req.body;
       const newOrder = await orderRepository.createOrder({
-        userId,
+        cartId,
+        name,
+        phone,
         address,
+        notes,
         startDate,
         endDate
       });
 
-      res.status(201).json(newOrder);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  }
-
-  async confirmOrder(req: Request, res: Response) {
-    try {
-      const { orderId } = req.body;
-      const order = await orderRepository.findOrderById(orderId);
-      if (!order) {
-        return res.status(404).json({ message: "Order not found" });
+      const cart = await cartRepository.findCartById(cartId);
+      if (!cart) {
+        return res.status(404).json({ message: "Cart not found" });
       }
 
-      const userEmail = order.userEmail;
-      const userId = order.userId;
-      const token = jwtUtils.sign({ id: userId });
-      await nodemailerUtils.sendOrderConfirmationEmail(userEmail, orderId, token);
+      const user = await userRepository.findUserById(cart.userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
 
-      res.status(200).json({ message: "Order confirmed" });
+      const userId = cart.userId;
+      const userEmail = user.email;
+      const token = jwtUtils.sign({ id: userId });
+      await nodemailerUtils.sendNewOrderEmail(userEmail, newOrder.id, token);
+
+      res.status(201).json(newOrder);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -83,10 +84,13 @@ class OrderController {
         return res.status(404).json({ message: "Order not found" });
       }
 
-      const { userId, address, startDate, endDate, orderDate, orderStatus } = req.body;
+      const { cartId, name, phone, address, notes, startDate, endDate, orderDate, orderStatus } = req.body;
       const updatedOrder = await orderRepository.updateOrder(id, {
-        userId: userId || order.userId,
+        cartId: cartId || order.cartId,
+        name: name || order.name,
+        phone: phone || order.phone,
         address: address || order.address,
+        notes: notes || order.notes,
         startDate: startDate || order.startDate,
         endDate: endDate || order.endDate,
         orderDate: orderDate || order.orderDate,
@@ -108,7 +112,7 @@ class OrderController {
       }
       
       await orderRepository.deleteOrder(id);
-      res.status(204).json(order);
+      res.status(204).end();
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -116,7 +120,7 @@ class OrderController {
 
   getRoutes() {
     return Router()
-      .get("/read", this.readAllOrder)
+      .get("/read", this.readAllOrders)
       .get("/read/past-month", this.readPastMonthOrders)
       .get("/read/:id", this.readOrderById)
       .post("/create", this.createOrder)

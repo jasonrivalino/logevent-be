@@ -6,7 +6,7 @@ import { Request, Response, Router } from "express";
 import vendorRepository from "../repositories/vendor.repository";
 
 class VendorController {
-  async readAllVendor(req: Request, res: Response) {
+  async readAllVendors(req: Request, res: Response) {
     try {
       const vendors = await vendorRepository.findAllVendorDetails();
       res.status(200).json(vendors);
@@ -82,7 +82,7 @@ class VendorController {
       }
 
       await vendorRepository.deleteVendor(id);
-      res.status(204).json(vendor);
+      res.status(204).end();
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -90,7 +90,7 @@ class VendorController {
 
   getRoutes() {
     return Router()
-      .get("/read", this.readAllVendor)
+      .get("/read", this.readAllVendors)
       .get("/read/:id", this.readVendorById)
       .post("/create", this.createVendor)
       .put("/update/:id", this.updateVendor)

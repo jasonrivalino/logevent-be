@@ -76,7 +76,6 @@ model Item {
   cartId        Int
   duration      Int?
   quantity      Int?
-  subtotal      Float
 
   event         Event?     @relation(fields: [eventId], references: [id])
   product       Product?   @relation(fields: [productId], references: [id])
@@ -91,7 +90,6 @@ model Order {
   phone       String
   address     String
   notes       String?   @db.Text
-  total       Float
   startDate   DateTime
   endDate     DateTime
   orderDate   DateTime  @default(now())
@@ -152,7 +150,7 @@ model Vendor {
   address     String
   instagram   String?
   socialMedia String?
-  documentUrl String
+  documentUrl String?   @db.Text
   joinDate    DateTime  @default(now())
   isDeleted   Boolean   @default(false)
 

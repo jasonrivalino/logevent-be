@@ -3,35 +3,34 @@
 // dependency modules
 import { Item } from "@prisma/client";
 // self-defined modules
-import orderRepository from "./order.repository";
-import userRepository from "./user.repository";
 import prisma from "../utils/prisma";
-import { ItemDetails } from "../utils/types";
+import { ItemDetail } from "../utils/types";
 
 class ItemRepository {
-  async findAllItems(): Promise<ItemDetails[]> {
+  async findAllItems(): Promise<Item[]> {
+    return prisma.item.findMany();
+  }
+
+  async findAllItemDetails(): Promise<ItemDetail[]> {
     const items = await prisma.item.findMany();
-    return Promise.all(items.map((item) => this.createItemDetails(item)));
+    return Promise.all(items.map(item => this.createItemDetail(item)));
   }
 
-  async findItemById(id: number): Promise<ItemDetails | null> {
+  async findItemById(id: number): Promise<Item | null> {
+    return prisma.item.findUnique({ where: { id } });
+  }
+
+  async findItemDetailById(id: number): Promise<ItemDetail | null> {
     const item = await prisma.item.findUnique({ where: { id } });
-    return item ? this.createItemDetails(item) : null;
-  }
-
-  async findItemsByOrderId(orderId: number): Promise<ItemDetails[]> {
-    const items = await prisma.item.findMany({ where: { orderId } });
-    return Promise.all(items.map((item) => this.createItemDetails(item)));
-  }
-
-  async findItemsByProductId(productId: number): Promise<ItemDetails[]> {
-    const items = await prisma.item.findMany({ where: { productId } });
-    return Promise.all(items.map((item) => this.createItemDetails(item)));
+    return item ? this.createItemDetail(item) : null;
   }
 
   async createItem(data: {
-    productId: number;
-    orderId: number;
+    eventId: number | null;
+    productId: number | null;
+    cartId: number;
+    duration: number | null;
+    quantity: number | null;
   }): Promise<Item> {
     return prisma.item.create({ data });
   }
@@ -44,46 +43,49 @@ class ItemRepository {
     return prisma.item.delete({ where: { id } });
   }
 
-  async getAverageRatingByProductId(productId: number): Promise<number> {
-    const items = await this.findItemsByProductId(productId);
-    const reviewedItems = items.filter((item) => item.reviewRating !== null);
-    if (reviewedItems.length === 0) return 0;
-    const totalRating = reviewedItems.reduce((acc, item) => acc + item.reviewRating!, 0);
-    return totalRating / reviewedItems.length;
-  }
+  async createItemDetail(item: Item): Promise<ItemDetail> {
+    const cart = await prisma.cart.findUnique({ where: { id: item.cartId } });
+    if (!cart) {
+      throw new Error("Cart not found");
+    }
 
-  async getReviewCountByProductId(productId: number): Promise<number> {
-    const items = await this.findItemsByProductId(productId);
-    const reviews = items.filter((item) => item.reviewRating !== null);
-    return reviews.length;
-  }
-
-  async getReviewByProductId(productId: number): Promise<ItemDetails[]> {
-    const items = await this.findItemsByProductId(productId);
-    return items.filter((item) => item.reviewRating !== null);
-  }
-
-  async createItemDetails(item: Item): Promise<ItemDetails> {
-    const order = await orderRepository.findOrderById(item.orderId);
+    const order = await prisma.order.findUnique({ where: { id: cart.id } });
     if (!order) {
       throw new Error("Order not found");
     }
 
-    const user = await userRepository.findUserById(order.userId);
-    if (!user) {
-      throw new Error("User not found");
+    let subtotal = 0;
+    const orderRange = Math.floor((order.endDate.getTime() - order.startDate.getTime()) / (1000 * 3600 * 24));
+    if (item.eventId) {
+      const event = await prisma.event.findUnique({ where: { id: item.eventId } });
+      if (item.duration) {
+        subtotal += event ? event.price * item.duration : 0;
+      } else if (item.quantity) {
+        subtotal += event ? event.price * item.quantity : 0;
+      } else {
+        subtotal += event ? event.price * orderRange : 0;
+      }
+    } else if (item.productId) {
+      const product = await prisma.product.findUnique({ where: { id: item.productId } });
+      if (item.duration) {
+        subtotal += product ? product.price * item.duration : 0;
+      } else if (item.quantity) {
+        subtotal += product ? product.price * item.quantity : 0;
+      } else {
+        subtotal += product ? product.price * orderRange : 0;
+      }
     }
 
     return {
       id: item.id,
+      eventId: item.eventId,
       productId: item.productId,
-      orderId: item.orderId,
-      userName: user.name,
-      userPicture: user.picture,
-      reviewRating: item.reviewRating,
-      reviewComment: item.reviewComment,
-      reviewDate: item.reviewDate,
-    };
+      cartId: item.cartId,
+      duration: item.duration,
+      quantity: item.quantity,
+      orderRange,
+      subtotal
+    }
   }
 }
 
