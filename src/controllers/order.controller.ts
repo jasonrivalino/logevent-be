@@ -19,15 +19,14 @@ class OrderController {
     }
   }
 
-  async readPastMonthOrders(req: Request, res: Response) {
+  async readPastTwoMonthOrders(req: Request, res: Response) {
     try {
       const chosenDate = req.params.date;
-      console.log(chosenDate);
       if (!chosenDate) {
         return res.status(400).json({ message: "Please provide a date" });
       }
 
-      const orders = await orderRepository.findPastMonthOrderDetails(new Date(chosenDate));
+      const orders = await orderRepository.findPastTwoMonthOrderDetails(new Date(chosenDate));
       res.status(200).json(orders);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -127,7 +126,7 @@ class OrderController {
   getRoutes() {
     return Router()
       .get("/read", this.readAllOrders)
-      .get("/read/past-month/:date", this.readPastMonthOrders)
+      .get("/read/past-month/:date", this.readPastTwoMonthOrders)
       .get("/read/:id", this.readOrderById)
       .post("/create", this.createOrder)
       .put("/update/:id", this.updateOrder)

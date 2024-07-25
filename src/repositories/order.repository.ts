@@ -37,11 +37,11 @@ class OrderRepository {
     });
   }
 
-  async findPastMonthOrderDetails(chosenDate: Date): Promise<OrderDetail[]> {
+  async findPastTwoMonthOrderDetails(chosenDate: Date): Promise<OrderDetail[]> {
     const orders = await prisma.order.findMany({
       where: {
         orderDate: {
-          gte: new Date(chosenDate.getTime() - 30 * 24 * 60 * 60 * 1000),
+          gte: new Date(chosenDate.getTime() - 60 * 24 * 60 * 60 * 1000),
         },
       },
     });
