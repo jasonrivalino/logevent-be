@@ -21,7 +21,8 @@ class OrderController {
 
   async readPastMonthOrders(req: Request, res: Response) {
     try {
-      const chosenDate = req.params.chosenDate;
+      const chosenDate = req.params.date;
+      console.log(chosenDate);
       if (!chosenDate) {
         return res.status(400).json({ message: "Please provide a date" });
       }
@@ -126,7 +127,7 @@ class OrderController {
   getRoutes() {
     return Router()
       .get("/read", this.readAllOrders)
-      .get("/read/past-month", this.readPastMonthOrders)
+      .get("/read/past-month/:date", this.readPastMonthOrders)
       .get("/read/:id", this.readOrderById)
       .post("/create", this.createOrder)
       .put("/update/:id", this.updateOrder)

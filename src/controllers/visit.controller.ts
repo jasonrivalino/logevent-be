@@ -18,7 +18,8 @@ class VisitController {
 
   async readPastWeekVisits(req: Request, res: Response) {
     try {
-      const chosenDate = req.params.chosenDate;
+      const chosenDate = req.params.date;
+      console.log(chosenDate);
       if (!chosenDate) {
         return res.status(400).json({ message: "Please provide a date" });
       }
