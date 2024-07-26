@@ -64,6 +64,7 @@ interface ProductDetail {
   specification: string;
   rate: string;
   price: number;
+  capacity: number | null;
   description: string | null;
   productImage: string | null;
   isDeleted: boolean;

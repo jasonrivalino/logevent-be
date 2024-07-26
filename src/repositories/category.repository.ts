@@ -10,6 +10,14 @@ class CategoryRepository {
     return prisma.category.findMany();
   }
 
+  async findProductCategories(): Promise<Category[]> {
+    return prisma.category.findMany({ where: { type: "Product" } });
+  }
+
+  async findEventCategories(): Promise<Category[]> {
+    return prisma.category.findMany({ where: { type: "Event" } });
+  }
+
   async findCategoryById(id: number): Promise<Category | null> {
     return prisma.category.findUnique({ where: { id } });
   }

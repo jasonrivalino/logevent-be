@@ -24,6 +24,29 @@ class ProductController {
     }
   }
 
+  async readEventOrganizerProduct(req: Request, res: Response) {
+    try {
+      const eventOrganizerProduct = await productRepository.findEventOrganizerProductDetails();
+      if (!eventOrganizerProduct) {
+        return res.status(404).json({ message: "Event Organizer Product not found" });
+      }
+
+      res.status(200).json(eventOrganizerProduct);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async readProductsByVendorId(req: Request, res: Response) {
+    try {
+      const vendorId = Number(req.params.vendorId);
+      const products = await productRepository.findProductDetailsByVendorId(vendorId);
+      res.status(200).json(products);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async readProductById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
@@ -106,6 +129,8 @@ class ProductController {
     return Router()
       .get("/read", this.readAllProducts)
       .get("/read/top", this.readTopProducts)
+      .get("/read/event-organizer", this.readEventOrganizerProduct)
+      .get("/read/vendor/:vendorId", this.readProductsByVendorId)
       .get("/read/:id", this.readProductById)
       .post("/create", this.createProduct)
       .put("/update/:id", this.updateProduct)

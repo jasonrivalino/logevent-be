@@ -26,6 +26,25 @@ class ProductRepository {
     return Promise.all(products.map((product) => this.createProductDetail(product)));
   }
 
+  async findEventOrganizerProduct(): Promise<Product | null> {
+    return prisma.product.findUnique({ 
+      where: { 
+        id: 1,
+        isDeleted: false
+      }
+     });
+  }
+
+  async findEventOrganizerProductDetails(): Promise<ProductDetail | null> {
+    const product = await prisma.product.findUnique({ 
+      where: { 
+        id: 1,
+        isDeleted: false
+      }
+     });
+    return product ? this.createProductDetail(product) : null;
+  }
+
   async findProductsByVendorId(vendorId: number): Promise<Product[]> {
     return prisma.product.findMany({ 
       where: { 
@@ -142,6 +161,7 @@ class ProductRepository {
       specification: product.specification,
       rate: product.rate,
       price: product.price,
+      capacity: product.capacity,
       description: product.description,
       productImage: product.productImage,
       isDeleted: product.isDeleted,
