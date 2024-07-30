@@ -43,7 +43,7 @@ class VendorRepository {
     address: string;
     instagram: string | null;
     socialMedia: string | null;
-    documentUrl: string;
+    documentUrl: string | null;
   }): Promise<Vendor> {
     return prisma.vendor.create({ data });
   }

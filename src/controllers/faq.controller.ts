@@ -81,11 +81,11 @@ class FaqController {
 
   getRoutes() {
     return Router()
-      .get("/", this.readAllFaqs)
-      .get("/:id", this.readFaqById)
-      .post("/", this.createFaq)
-      .put("/:id", this.updateFaq)
-      .delete("/:id", this.deleteFaq);
+      .get("/read", this.readAllFaqs)
+      .get("/read/:id", this.readFaqById)
+      .post("/create", this.createFaq)
+      .put("/update/:id", this.updateFaq)
+      .delete("/delete/:id", this.deleteFaq);
   }
 }
 
