@@ -56,6 +56,7 @@ interface OrderDetail {
 interface ProductDetail {
   id: number;
   vendorId: number;
+  vendorName: string;
   vendorPhone: string;
   vendorAddress: string;
   categoryId: number;

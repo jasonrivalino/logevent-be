@@ -153,6 +153,7 @@ class ProductRepository {
     return {
       id: product.id,
       vendorId: product.vendorId,
+      vendorName: vendor.name,
       vendorPhone: vendor.phone,
       vendorAddress: vendor.address,
       categoryId: product.categoryId,

@@ -57,7 +57,12 @@ class VendorRepository {
   }
 
   async createVendorDetail(vendor: Vendor): Promise<VendorDetail> {
-    const products = await prisma.product.findMany({ where: { vendorId: vendor.id } });
+    const products = await prisma.product.findMany({ 
+      where: { 
+        vendorId: vendor.id,
+        isDeleted: false
+      }
+     });
     
     return {
       id: vendor.id,
