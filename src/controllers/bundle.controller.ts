@@ -106,8 +106,8 @@ class BundleController {
       .get("/read/event/:eventId", this.readBundlesByEventId)
       .get("/read/:id", this.readBundleById)
       .post("/create", this.createBundle)
-      .put("/update:id", this.updateBundle)
-      .delete("/delete:id", this.deleteBundle);
+      .put("/update/:id", this.updateBundle)
+      .delete("/delete/:id", this.deleteBundle);
   }
 }
 
