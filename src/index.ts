@@ -29,6 +29,7 @@ app.use(express.json({ limit: '2mb' }));
 
 app.use('/albums', albumController.getRoutes());
 app.use('/auth', authController.getRoutes());
+app.use('/bundles', bundleController.getRoutes());
 app.use('/carts', cartController.getRoutes());
 app.use('/categories', categoryController.getRoutes());
 app.use('/events', eventController.getRoutes());

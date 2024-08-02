@@ -33,6 +33,16 @@ class OrderController {
     }
   }
 
+  async readOrdersByUserId(req: Request, res: Response) {
+    try {
+      const userId = Number(req.params.userId);
+      const orders = await orderRepository.findOrderDetailsByUserId(userId);
+      res.status(200).json(orders);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async readOrderById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
@@ -127,6 +137,7 @@ class OrderController {
     return Router()
       .get("/read", this.readAllOrders)
       .get("/read/past-two-month/:date", this.readPastTwoMonthOrders)
+      .get("/read/user/:userId", this.readOrdersByUserId)
       .get("/read/:id", this.readOrderById)
       .post("/create", this.createOrder)
       .put("/update/:id", this.updateOrder)

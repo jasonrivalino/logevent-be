@@ -4,6 +4,7 @@
 import { Request, Response, Router } from "express";
 // self-defined modules
 import productRepository from "../repositories/product.repository";
+import cloudinaryUtils from "../utils/cloudinary";
 
 class ProductController {
   async readAllProducts(req: Request, res: Response) {
@@ -65,6 +66,7 @@ class ProductController {
   async createProduct(req: Request, res: Response) {
     try {
       const { vendorId, categoryId, name, specification, rate, price, capacity, description, productImage } = req.body;
+      const productImageUrl = productImage ? await cloudinaryUtils.uploadFile(productImage) : null;
       const newProduct = await productRepository.createProduct({
         vendorId,
         categoryId,
@@ -74,7 +76,7 @@ class ProductController {
         price,
         capacity,
         description,
-        productImage
+        productImage: productImageUrl
       });
 
       res.status(201).json(newProduct);
@@ -93,6 +95,15 @@ class ProductController {
       }
 
       const { vendorId, categoryId, name, specification, rate, price, capacity, description, productImage } = req.body;
+      if (product.productImage && !productImage) {
+        await cloudinaryUtils.deleteFile(product.productImage);
+      }
+
+      const productImageUrl = productImage ? await cloudinaryUtils.uploadFile(productImage) : null;
+      if (product.productImage && productImageUrl) {
+        await cloudinaryUtils.deleteFile(product.productImage);
+      }
+
       const updatedProduct = await productRepository.updateProduct(id, {
         vendorId: vendorId || product.vendorId,
         categoryId: categoryId || product.categoryId,
@@ -102,7 +113,7 @@ class ProductController {
         price: price || product.price,
         capacity: capacity || product.capacity,
         description: description || product.description,
-        productImage: productImage || product.productImage
+        productImage: productImageUrl || product.productImage
       });
 
       res.status(200).json(updatedProduct);
@@ -117,6 +128,10 @@ class ProductController {
       const product = await productRepository.findProductById(id);
       if (!product) {
         return res.status(404).json({ message: "Product not found" });
+      }
+
+      if (product.productImage) {
+        await cloudinaryUtils.deleteFile(product.productImage);
       }
 
       await productRepository.deleteProduct(id);

@@ -4,6 +4,7 @@
 import { Request, Response, Router } from "express";
 // self-defined modules
 import albumRepository from "../repositories/album.repository";
+import cloudinaryUtils from "../utils/cloudinary";
 
 class AlbumController {
   async readAllAlbums(req: Request, res: Response) {
@@ -43,9 +44,10 @@ class AlbumController {
   async createAlbum(req: Request, res: Response) {
     try {
       const { productId, albumImage } = req.body;
+      const albumImageUrl = albumImage ? await cloudinaryUtils.uploadFile(albumImage) : null;
       const newAlbum = await albumRepository.createAlbum({
         productId,
-        albumImage
+        albumImage: albumImageUrl
       });
 
       res.status(201).json(newAlbum);
@@ -63,9 +65,18 @@ class AlbumController {
       }
 
       const { productId, albumImage } = req.body;
+      if (album.albumImage && !albumImage) {
+        await cloudinaryUtils.deleteFile(album.albumImage);
+      }
+
+      const albumImageUrl = albumImage ? await cloudinaryUtils.uploadFile(albumImage) : null;
+      if (album.albumImage && albumImageUrl) {
+        await cloudinaryUtils.deleteFile(album.albumImage);
+      }
+
       const updatedAlbum = await albumRepository.updateAlbum(id, {
         productId: productId || album.productId,
-        albumImage: albumImage || album.albumImage
+        albumImage: albumImageUrl || album.albumImage
       });
 
       res.status(200).json(updatedAlbum);
@@ -80,6 +91,10 @@ class AlbumController {
       const album = await albumRepository.findAlbumById(id);
       if (!album) {
         return res.status(404).json({ message: "Album not found" });
+      }
+
+      if (album.albumImage) {
+        await cloudinaryUtils.deleteFile(album.albumImage);
       }
 
       await albumRepository.deleteAlbum(id);

@@ -149,6 +149,10 @@ class AuthController {
       }
 
       const pictureUrl = picture ? await cloudinaryUtils.uploadFile(picture) : null;
+      if (user.picture && pictureUrl) {
+        await cloudinaryUtils.deleteFile(user.picture);
+      }
+
       const hashedPassword = password ? await hash(password, 10) : null;
       const updatedUser = await userRepository.updateUser(id, {
         name: name || user.name,

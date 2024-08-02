@@ -10,12 +10,12 @@ class CartRepository {
     return prisma.cart.findMany();
   }
 
-  async findCartById(id: number): Promise<Cart | null> {
-    return prisma.cart.findUnique({ where: { id } });
+  async findCartsByUserId(userId: number): Promise<Cart[]> {
+    return prisma.cart.findMany({ where: { userId } });
   }
 
-  async findCartByUserId(userId: number): Promise<Cart[]> {
-    return prisma.cart.findMany({ where: { userId } });
+  async findCartById(id: number): Promise<Cart | null> {
+    return prisma.cart.findUnique({ where: { id } });
   }
 
   async createCart(data: {

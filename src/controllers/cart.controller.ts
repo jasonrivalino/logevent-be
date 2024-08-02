@@ -15,6 +15,21 @@ class CartController {
     }
   }
 
+  async readCartsByUserId(req: Request, res: Response) {
+    try {
+      const userId = Number(req.params.userId);
+      const cart = await cartRepository.findCartsByUserId(userId);
+      if (!cart) {
+        return res.status(404).json({ message: "Cart not found" });
+      }
+
+      res.status(200).json(cart);
+    }
+    catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async readCartById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
@@ -84,6 +99,7 @@ class CartController {
   getRoutes() {
     return Router()
       .get("/read", this.readAllCarts)
+      .get("/read/user/:userId", this.readCartsByUserId)
       .get("/read/:id", this.readCartById)
       .post("/create", this.createCart)
       .put("/update/:id", this.updateCart)
