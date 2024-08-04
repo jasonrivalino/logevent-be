@@ -100,7 +100,7 @@ interface ReviewDetail {
   eventId: number | null;
   productId: number | null;
   rating: number;
-  comment: string;
+  comment: string | null;
   tag: string | null;
   reviewDate: Date;
 };

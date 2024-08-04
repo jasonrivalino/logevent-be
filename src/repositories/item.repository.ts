@@ -39,16 +39,6 @@ class ItemRepository {
     return prisma.item.findUnique({ where: { id } });
   }
 
-  async findItemEventDetailById(id: number): Promise<ItemEventDetail | null> {
-    const item = await prisma.item.findUnique({ where: { id } });
-    return item ? this.createItemEventDetail(item) : null;
-  }
-
-  async findItemProductDetailById(id: number): Promise<ItemProductDetail | null> {
-    const item = await prisma.item.findUnique({ where: { id } });
-    return item ? this.createItemProductDetail(item) : null;
-  }
-
   async createItem(data: {
     eventId: number | null;
     productId: number | null;

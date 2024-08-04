@@ -124,7 +124,7 @@ model Review {
   id         Int       @id @default(autoincrement())
   itemId     Int
   rating     Int
-  comment    String
+  comment    String?
   tag        String?
   reviewDate DateTime  @default(now())
 

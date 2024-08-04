@@ -37,13 +37,12 @@ class ReviewController {
 
   async createReview(req: Request, res: Response) {
     try {
-      const { itemId, rating, comment, tag, reviewDate } = req.body;
+      const { itemId, rating, comment, tag } = req.body;
       const newReview = await reviewRepository.createReview({
         itemId,
         rating,
         comment,
-        tag,
-        reviewDate
+        tag
       });
 
       res.status(201).json(newReview);

@@ -44,32 +44,16 @@ class ItemController {
     }
   }
 
-  async readEventItemById(req: Request, res: Response) {
+  async readItemById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const item = await itemRepository.findItemEventDetailById(id);
+      const item = await itemRepository.findItemById(id);
       if (!item) {
         return res.status(404).json({ message: "Item not found" });
       }
 
       res.status(200).json(item);
-    }
-    catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  }
-
-  async readProductItemById(req: Request, res: Response) {
-    try {
-      const id = Number(req.params.id);
-      const item = await itemRepository.findItemProductDetailById(id);
-      if (!item) {
-        return res.status(404).json({ message: "Item not found" });
-      }
-
-      res.status(200).json(item);
-    }
-    catch (error: any) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   }
@@ -135,8 +119,7 @@ class ItemController {
       .get("/read/product", this.readAllProductItems)
       .get("/read/event/:cartId", this.readEventItemsByCartId)
       .get("/read/product/:cartId", this.readProductItemsByCartId)
-      .get("/read/event/:id", this.readEventItemById)
-      .get("/read/product/:id", this.readProductItemById)
+      .get("/read/:id", this.readItemById)
       .post("/create", this.createItem)
       .put("/update/:id", this.updateItem)
       .delete("/delete/:id", this.deleteItem);
