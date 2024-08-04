@@ -18,6 +18,10 @@ class CategoryRepository {
     return prisma.category.findMany({ where: { type: "Event" } });
   }
 
+  async findEventOrganizerCategories(): Promise<Category[]> {
+    return prisma.category.findMany({ where: { type: "Event Organizer" } });
+  }
+
   async findCategoryById(id: number): Promise<Category | null> {
     return prisma.category.findUnique({ where: { id } });
   }

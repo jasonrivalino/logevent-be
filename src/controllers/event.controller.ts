@@ -32,11 +32,10 @@ class EventController {
 
   async createEvent(req: Request, res: Response) {
     try {
-      const { categoryId, name, rate, price, capacity, description, eventImage } = req.body;
+      const { categoryId, name, price, capacity, description, eventImage } = req.body;
       const newEvent = await eventRepository.createEvent({
         categoryId,
         name,
-        rate,
         price,
         capacity,
         description,
@@ -57,11 +56,10 @@ class EventController {
         return res.status(404).json({ message: "Event not found" });
       }
 
-      const { categoryId, name, rate, price, capacity, description, eventImage } = req.body;
+      const { categoryId, name, price, capacity, description, eventImage } = req.body;
       const updatedEvent = await eventRepository.updateEvent(id, {
         categoryId: categoryId || event.categoryId,
         name: name || event.name,
-        rate: rate || event.rate,
         price: price || event.price,
         capacity: capacity || event.capacity,
         description: description || event.description,

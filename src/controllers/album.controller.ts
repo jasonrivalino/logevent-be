@@ -16,6 +16,16 @@ class AlbumController {
     }
   }
 
+  async readAlbumsByEventId(req: Request, res: Response) {
+    try {
+      const eventId = Number(req.params.eventId);
+      const albums = await albumRepository.findAlbumsByEventId(eventId);
+      res.status(200).json(albums);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async readAlbumsByProductId(req: Request, res: Response) {
     try {
       const productId = Number(req.params.productId);
@@ -43,9 +53,10 @@ class AlbumController {
 
   async createAlbum(req: Request, res: Response) {
     try {
-      const { productId, albumImage } = req.body;
+      const { eventId, productId, albumImage } = req.body;
       const albumImageUrl = albumImage ? await cloudinaryUtils.uploadFile(albumImage) : null;
       const newAlbum = await albumRepository.createAlbum({
+        eventId,
         productId,
         albumImage: albumImageUrl
       });
@@ -64,7 +75,7 @@ class AlbumController {
         return res.status(404).json({ message: "Album not found" });
       }
 
-      const { productId, albumImage } = req.body;
+      const { eventId, productId, albumImage } = req.body;
       if (album.albumImage && !albumImage) {
         await cloudinaryUtils.deleteFile(album.albumImage);
       }
@@ -75,6 +86,7 @@ class AlbumController {
       }
 
       const updatedAlbum = await albumRepository.updateAlbum(id, {
+        eventId: eventId || album.eventId,
         productId: productId || album.productId,
         albumImage: albumImageUrl || album.albumImage
       });
@@ -107,6 +119,7 @@ class AlbumController {
   getRoutes() {
     return Router()
       .get("/read", this.readAllAlbums)
+      .get("/read/event/:eventId", this.readAlbumsByEventId)
       .get("/read/product/:productId", this.readAlbumsByProductId)
       .get("/read/:id", this.readAlbumById)
       .post("/create", this.createAlbum)

@@ -4,34 +4,49 @@
 import { Item } from "@prisma/client";
 // self-defined modules
 import prisma from "../utils/prisma";
-import { ItemDetail } from "../utils/types";
+import { ItemEventDetail, ItemProductDetail } from "../utils/types";
 
 class ItemRepository {
   async findAllItems(): Promise<Item[]> {
     return prisma.item.findMany();
   }
 
-  async findAllItemDetails(): Promise<ItemDetail[]> {
+  async findAllItemsEventDetails(): Promise<ItemEventDetail[]> {
     const items = await prisma.item.findMany();
-    return Promise.all(items.map(item => this.createItemDetail(item)));
+    return Promise.all(items.map(item => this.createItemEventDetail(item)));
+  }
+
+  async findAllItemsProductDetails(): Promise<ItemProductDetail[]> {
+    const items = await prisma.item.findMany();
+    return Promise.all(items.map(item => this.createItemProductDetail(item)));
   }
 
   async findItemsByCartId(cartId: number): Promise<Item[]> {
     return prisma.item.findMany({ where: { cartId } });
   }
 
-  async findItemDetailsByCartId(cartId: number): Promise<ItemDetail[]> {
+  async findItemsEventDetailsByCartId(cartId: number): Promise<ItemEventDetail[]> {
     const items = await prisma.item.findMany({ where: { cartId } });
-    return Promise.all(items.map(item => this.createItemDetail(item)));
+    return Promise.all(items.map(item => this.createItemEventDetail(item)));
+  }
+
+  async findItemsProductDetailsByCartId(cartId: number): Promise<ItemProductDetail[]> {
+    const items = await prisma.item.findMany({ where: { cartId } });
+    return Promise.all(items.map(item => this.createItemProductDetail(item)));
   }
 
   async findItemById(id: number): Promise<Item | null> {
     return prisma.item.findUnique({ where: { id } });
   }
 
-  async findItemDetailById(id: number): Promise<ItemDetail | null> {
+  async findItemEventDetailById(id: number): Promise<ItemEventDetail | null> {
     const item = await prisma.item.findUnique({ where: { id } });
-    return item ? this.createItemDetail(item) : null;
+    return item ? this.createItemEventDetail(item) : null;
+  }
+
+  async findItemProductDetailById(id: number): Promise<ItemProductDetail | null> {
+    const item = await prisma.item.findUnique({ where: { id } });
+    return item ? this.createItemProductDetail(item) : null;
   }
 
   async createItem(data: {
@@ -52,48 +67,97 @@ class ItemRepository {
     return prisma.item.delete({ where: { id } });
   }
 
-  async createItemDetail(item: Item): Promise<ItemDetail> {
+  async createItemEventDetail(item: Item): Promise<ItemEventDetail> {
     const cart = await prisma.cart.findUnique({ where: { id: item.cartId } });
     if (!cart) {
       throw new Error("Cart not found");
     }
 
-    const order = await prisma.order.findUnique({ where: { id: cart.id } });
-    if (!order) {
-      throw new Error("Order not found");
+    if (!item.eventId) {
+      throw new Error("Item is not an event");
     }
 
-    let subtotal = 0;
-    const orderRange = Math.floor((order.endDate.getTime() - order.startDate.getTime()) / (1000 * 3600 * 24));
-    if (item.eventId) {
-      const event = await prisma.event.findUnique({ where: { id: item.eventId } });
-      if (item.duration) {
-        subtotal += event ? event.price * item.duration : 0;
-      } else if (item.quantity) {
-        subtotal += event ? event.price * item.quantity : 0;
-      } else {
-        subtotal += event ? event.price * orderRange : 0;
-      }
-    } else if (item.productId) {
-      const product = await prisma.product.findUnique({ where: { id: item.productId } });
-      if (item.duration) {
-        subtotal += product ? product.price * item.duration : 0;
-      } else if (item.quantity) {
-        subtotal += product ? product.price * item.quantity : 0;
-      } else {
-        subtotal += product ? product.price * orderRange : 0;
-      }
+    const event = await prisma.event.findUnique({ where: { id: item.eventId } });
+    if (!event) {
+      throw new Error("Event not found");
     }
+
+    const eventBundles = await prisma.bundle.findMany({ where: { eventId: event.id } });
+    const productBundles = eventBundles.map((bundle) => bundle.productId);
+    const bundles = await prisma.product.findMany({ where: { id: { in: productBundles } } });
+
+    const items = await prisma.item.findMany({ where: { eventId: event.id } });
+    const itemIds = items.map((item) => item.id);
+    const reviews = await prisma.review.findMany({ where: { itemId: { in: itemIds } } });
+    const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+
+    let eventRating = 0;
+    if (reviews.length !== 0) {
+      eventRating = totalRating / reviews.length;
+    }
+
+    const review = await prisma.review.findFirst({ where: { itemId: item.id } });
+    const isReviewed = review ? true : false;
 
     return {
       id: item.id,
-      eventId: item.eventId,
-      productId: item.productId,
       cartId: item.cartId,
+      eventId: item.eventId,
+      eventName: event.name,
+      eventPrice: event.price,
+      eventDescription: event.description,
+      eventImage: event.eventImage,
+      eventBundles: bundles.map((bundle) => bundle.name).join(", "),
+      eventRating: eventRating,
+      isReviewed,
+    }
+  }
+
+  async createItemProductDetail(item: Item): Promise<ItemProductDetail> {
+    const cart = await prisma.cart.findUnique({ where: { id: item.cartId } });
+    if (!cart) {
+      throw new Error("Cart not found");
+    }
+
+    if (!item.productId) {
+      throw new Error("Item is not a product");
+    }
+
+    const product = await prisma.product.findUnique({ where: { id: item.productId } });
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    const vendor = await prisma.vendor.findUnique({ where: { id: product.vendorId } });
+    if (!vendor) {
+      throw new Error("Vendor not found");
+    }
+
+    const reviews = await prisma.review.findMany({ where: { itemId: item.id } });
+    const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+
+    let productRating = 0;
+    if (reviews.length !== 0) {
+      productRating = totalRating / reviews.length;
+    }
+
+    const review = await prisma.review.findFirst({ where: { itemId: item.id } });
+    const isReviewed = review ? true : false;
+
+    return {
+      id: item.id,
+      cartId: item.cartId,
+      productId: item.productId,
+      productName: product.name,
+      productSpecification: product.specification,
+      productPrice: product.price,
+      productImage: product.productImage,
+      productRating: productRating,
+      vendorId: product.vendorId,
+      vendorAddress: vendor.address,
       duration: item.duration,
       quantity: item.quantity,
-      orderRange,
-      subtotal
+      isReviewed,
     }
   }
 }

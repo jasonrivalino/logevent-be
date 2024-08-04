@@ -6,29 +6,63 @@ import { Request, Response, Router } from "express";
 import itemRepository from "../repositories/item.repository";
 
 class ItemController {
-  async readAllItems(req: Request, res: Response) {
+  async readAllEventItems(req: Request, res: Response) {
     try {
-      const items = await itemRepository.findAllItemDetails();
+      const items = await itemRepository.findAllItemsEventDetails();
       res.status(200).json(items);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   }
 
-  async readItemsByCartId(req: Request, res: Response) {
+  async readAllProductItems(req: Request, res: Response) {
+    try {
+      const items = await itemRepository.findAllItemsProductDetails();
+      res.status(200).json(items);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async readEventItemsByCartId(req: Request, res: Response) {
     try {
       const cartId = Number(req.params.cartId);
-      const items = await itemRepository.findItemDetailsByCartId(cartId);
+      const items = await itemRepository.findItemsEventDetailsByCartId(cartId);
       res.status(200).json(items);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   }
 
-  async readItemById(req: Request, res: Response) {
+  async readProductItemsByCartId(req: Request, res: Response) {
+    try {
+      const cartId = Number(req.params.cartId);
+      const items = await itemRepository.findItemsProductDetailsByCartId(cartId);
+      res.status(200).json(items);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async readEventItemById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const item = await itemRepository.findItemDetailById(id);
+      const item = await itemRepository.findItemEventDetailById(id);
+      if (!item) {
+        return res.status(404).json({ message: "Item not found" });
+      }
+
+      res.status(200).json(item);
+    }
+    catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async readProductItemById(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const item = await itemRepository.findItemProductDetailById(id);
       if (!item) {
         return res.status(404).json({ message: "Item not found" });
       }
@@ -42,11 +76,11 @@ class ItemController {
 
   async createItem(req: Request, res: Response) {
     try {
-      const { eventId, productId, cartId, duration, quantity } = req.body;
+      const { cartId, eventId, productId, duration, quantity } = req.body;
       const newItem = await itemRepository.createItem({
+        cartId,
         eventId,
         productId,
-        cartId,
         duration,
         quantity
       });
@@ -60,16 +94,16 @@ class ItemController {
   async updateItem(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const item = await itemRepository.findItemDetailById(id);
+      const item = await itemRepository.findItemById(id);
       if (!item) {
         return res.status(404).json({ message: "Item not found" });
       }
 
-      const { eventId, productId, cartId, duration, quantity } = req.body;
+      const { cartId, eventId, productId, duration, quantity } = req.body;
       const updatedItem = await itemRepository.updateItem(id, {
+        cartId: cartId || item.cartId,
         eventId: eventId || item.eventId,
         productId: productId || item.productId,
-        cartId: cartId || item.cartId,
         duration: duration || item.duration,
         quantity: quantity || item.quantity
       });
@@ -83,7 +117,7 @@ class ItemController {
   async deleteItem(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const item = await itemRepository.findItemDetailById(id);
+      const item = await itemRepository.findItemById(id);
       if (!item) {
         return res.status(404).json({ message: "Item not found" });
       }
@@ -97,11 +131,15 @@ class ItemController {
 
   getRoutes() {
     return Router()
-      .get("/", this.readAllItems)
-      .get("/:id", this.readItemById)
-      .post("/", this.createItem)
-      .put("/:id", this.updateItem)
-      .delete("/:id", this.deleteItem);
+      .get("/read/event", this.readAllEventItems)
+      .get("/read/product", this.readAllProductItems)
+      .get("/read/event/:cartId", this.readEventItemsByCartId)
+      .get("/read/product/:cartId", this.readProductItemsByCartId)
+      .get("/read/event/:id", this.readEventItemById)
+      .get("/read/product/:id", this.readProductItemById)
+      .post("/create", this.createItem)
+      .put("/update/:id", this.updateItem)
+      .delete("/delete/:id", this.deleteItem);
   }
 }
 

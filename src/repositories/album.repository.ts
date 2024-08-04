@@ -14,12 +14,17 @@ class AlbumRepository {
     return prisma.album.findUnique({ where: { id } });
   }
 
+  async findAlbumsByEventId(eventId: number): Promise<Album[]> {
+    return prisma.album.findMany({ where: { eventId } });
+  }
+
   async findAlbumsByProductId(productId: number): Promise<Album[]> {
     return prisma.album.findMany({ where: { productId } });
   }
 
   async createAlbum(data: {
-    productId: number;
+    eventId: number | null;
+    productId: number | null;
     albumImage: string | null;
   }): Promise<Album> {
     return prisma.album.create({ data });

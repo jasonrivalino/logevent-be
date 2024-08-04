@@ -25,14 +25,10 @@ class ProductController {
     }
   }
 
-  async readEventOrganizerProduct(req: Request, res: Response) {
+  async readAdminProducts(req: Request, res: Response) {
     try {
-      const eventOrganizerProduct = await productRepository.findEventOrganizerProductDetails();
-      if (!eventOrganizerProduct) {
-        return res.status(404).json({ message: "Event Organizer Product not found" });
-      }
-
-      res.status(200).json(eventOrganizerProduct);
+      const adminProducts = await productRepository.findAllAdminProductDetails();
+      res.status(200).json(adminProducts);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
@@ -145,7 +141,7 @@ class ProductController {
     return Router()
       .get("/read", this.readAllProducts)
       .get("/read/top", this.readTopProducts)
-      .get("/read/event-organizer", this.readEventOrganizerProduct)
+      .get("/read/admin", this.readAdminProducts)
       .get("/read/vendor/:vendorId", this.readProductsByVendorId)
       .get("/read/:id", this.readProductById)
       .post("/create", this.createProduct)

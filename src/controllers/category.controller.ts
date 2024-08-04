@@ -33,6 +33,15 @@ class CategoryController {
     }
   }
 
+  async readEventOrganizerCategories(req: Request, res: Response) {
+    try {
+      const categories = await categoryRepository.findEventOrganizerCategories();
+      res.status(200).json(categories);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async readCategoryById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
@@ -102,6 +111,7 @@ class CategoryController {
       .get("/read", this.readAllCategories)
       .get("/read/product", this.readProductCategories)
       .get("/read/event", this.readEventCategories)
+      .get("/read/event-organizer", this.readEventOrganizerCategories)
       .get("/read/:id", this.readCategoryById)
       .post("/create", this.createCategory)
       .put("/update/:id", this.updateCategory)

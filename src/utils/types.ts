@@ -12,7 +12,6 @@ interface EventDetail {
   categoryId: number;
   categoryName: string;
   name: string;
-  rate: string;
   price: number;
   capacity: number | null;
   description: string | null;
@@ -23,15 +22,33 @@ interface EventDetail {
   reviewCount: number;
 };
 
-interface ItemDetail {
+interface ItemEventDetail {
   id: number;
-  eventId: number | null;
-  productId: number | null;
   cartId: number;
+  eventId: number;
+  eventName: string;
+  eventPrice: number;
+  eventDescription: string | null;
+  eventImage: string | null;
+  eventBundles: string | null;
+  eventRating: number;
+  isReviewed: boolean;
+};
+
+interface ItemProductDetail {
+  id: number;
+  cartId: number;
+  productId: number;
+  productName: string;
+  productSpecification: string;
+  productPrice: number;
+  productImage: string | null;
+  productRating: number;
+  vendorId: number;
+  vendorAddress: string;
   duration: number | null;
   quantity: number | null;
-  orderRange: number;
-  subtotal: number;
+  isReviewed: boolean;
 };
 
 interface OrderDetail {
@@ -49,8 +66,8 @@ interface OrderDetail {
   startDate: Date;
   endDate: Date;
   orderDate: Date;
-  orderStatus: string | null;
   orderTotal: number;
+  orderStatus: string;
 };
 
 interface ProductDetail {
@@ -76,12 +93,12 @@ interface ProductDetail {
 interface ReviewDetail {
   id: number;
   itemId: number;
-  eventId: number | null;
-  productId: number | null;
   cartId: number;
   userId: number;
   userName: string;
   userPicture: string | null;
+  eventId: number | null;
+  productId: number | null;
   rating: number;
   comment: string;
   tag: string | null;
@@ -102,4 +119,4 @@ interface VendorDetail {
   productCount: number;
 };
 
-export type { CustomRequest, EventDetail, ItemDetail, OrderDetail, ProductDetail, ReviewDetail, VendorDetail };
+export type { CustomRequest, EventDetail, ItemEventDetail, ItemProductDetail, OrderDetail, ProductDetail, ReviewDetail, VendorDetail };

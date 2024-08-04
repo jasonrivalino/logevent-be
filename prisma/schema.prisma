@@ -10,11 +10,13 @@ datasource db {
 }
 
 model Album {
-  id         Int      @id @default(autoincrement())
-  productId  Int
-  albumImage String?  @db.Text
+  id         Int       @id @default(autoincrement())
+  eventId    Int?
+  productId  Int?
+  albumImage String?   @db.Text
 
-  product    Product  @relation(fields: [productId], references: [id])
+  event      Event?    @relation(fields: [eventId], references: [id])
+  product    Product?  @relation(fields: [productId], references: [id])
 }
 
 model Bundle {
@@ -51,7 +53,6 @@ model Event {
   id          Int      @id @default(autoincrement())
   categoryId  Int
   name        String
-  rate        String
   price       Float
   capacity    Int?
   description String?  @db.Text
@@ -59,6 +60,7 @@ model Event {
   isDeleted   Boolean  @default(false)
 
   category    Category @relation(fields: [categoryId], references: [id])
+  albums      Album[]
   bundles     Bundle[]
   items       Item[]
 }
@@ -71,15 +73,15 @@ model Faq {
 
 model Item {
   id            Int        @id @default(autoincrement())
+  cartId        Int
   eventId       Int?
   productId     Int?
-  cartId        Int
   duration      Int?
   quantity      Int?
 
+  cart          Cart       @relation(fields: [cartId], references: [id])
   event         Event?     @relation(fields: [eventId], references: [id])
   product       Product?   @relation(fields: [productId], references: [id])
-  cart          Cart       @relation(fields: [cartId], references: [id])
   reviews       Review[]
 }
 

@@ -38,7 +38,6 @@ class EventRepository {
   async createEvent(data: {
     categoryId: number;
     name: string;
-    rate: string;
     price: number;
     capacity: number | null;
     description: string | null;
@@ -80,7 +79,6 @@ class EventRepository {
       categoryId: event.categoryId,
       categoryName: category.name,
       name: event.name,
-      rate: event.rate,
       price: event.price,
       capacity: event.capacity,
       description: event.description,

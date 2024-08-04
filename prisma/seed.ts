@@ -83,14 +83,15 @@ async function main() {
     data: {
       userId: admin.id,
       type: 'Event Organizer',
+      cartStatus: 'Checked Out'
     },
   });
 
   // Create 1 Event Organizer Item
   const eventOrganizerItem = await prisma.item.create({
     data: {
-      productId: eventOrganizerProduct.id,
       cartId: eventOrganizerCart.id,
+      productId: eventOrganizerProduct.id,
     },
   });
 
@@ -103,7 +104,9 @@ async function main() {
       address: 'Event Organizer Order Address',
       notes: 'Event Organizer Order Notes',
       startDate: getRandomDateWithinPastTwoMonth(),
-      endDate: getRandomDateWithinPastTwoMonth()
+      endDate: getRandomDateWithinPastTwoMonth(),
+      orderDate: getRandomDateWithinPastTwoMonth(),
+      orderStatus: 'Completed'
     },
   });
 
@@ -192,7 +195,7 @@ async function main() {
     products.push(product);
   }
 
-  // Create 100 Albums
+  // Create 100 Product Albums
   const albumCount = 100;
   for (let i = 0; i < albumCount; i++) {
     await prisma.album.create({
@@ -224,7 +227,6 @@ async function main() {
       data: {
         categoryId: eventCategories[Math.floor(Math.random() * eventCategoryCount)].id,
         name: `Event ${i+1}`,
-        rate: rates[Math.floor(Math.random() * rates.length)],
         price: Math.floor(Math.random() * 10000000),
         capacity: Math.floor(Math.random() * 1000),
         description: `Description ${i+1}`,
@@ -232,6 +234,16 @@ async function main() {
       },
     });
     events.push(event);
+  }
+
+  // Create 100 Event Albums
+  for (let i = 0; i < albumCount; i++) {
+    await prisma.album.create({
+      data: {
+        eventId: events[Math.floor(Math.random() * eventCount)].id,
+        albumImage: images[Math.floor(Math.random() * images.length)],
+      },
+    });
   }
 
   // Create 100 Bundles
@@ -254,6 +266,7 @@ async function main() {
       data: {
         userId: users[Math.floor(Math.random() * userCount)].id,
         type: types[Math.floor(Math.random() * types.length)],
+        cartStatus: 'Checked Out'
       },
     });
     carts.push(cart);
@@ -279,8 +292,8 @@ async function main() {
 
     const productItem = await prisma.item.create({
       data: {
-        productId: products[Math.floor(Math.random() * productCount)].id,
         cartId: cart.id,
+        productId: products[Math.floor(Math.random() * productCount)].id,
         duration: duration,
         quantity: quantity
       },
@@ -297,21 +310,10 @@ async function main() {
       cart = carts[Math.floor(Math.random() * cartCount)];
     }
 
-    let duration: number | null = null;
-    let quantity: number | null = null;
-    const event = events[Math.floor(Math.random() * eventCount)];
-    if (event.rate === "Quantity") {
-      quantity = Math.floor(Math.random() * 100);
-    } else if (event.rate === "Hourly") {
-      duration = Math.floor(Math.random() * 24);
-    }
-
     const eventItem = await prisma.item.create({
       data: {
-        eventId: events[Math.floor(Math.random() * eventCount)].id,
         cartId: cart.id,
-        duration: duration,
-        quantity: quantity
+        eventId: events[Math.floor(Math.random() * eventCount)].id,
       },
     });
     eventItems.push(eventItem);
@@ -330,6 +332,7 @@ async function main() {
         startDate: getRandomDateWithinPastTwoMonth(),
         endDate: getRandomDateWithinPastTwoMonth(),
         orderDate: getRandomDateWithinPastTwoMonth(),
+        orderStatus: 'Completed'
       },
     });
   }
