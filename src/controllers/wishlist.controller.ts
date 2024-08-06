@@ -81,6 +81,7 @@ class WishlistController {
         return res.status(404).json({ message: "Wishlist not found" });
       }
 
+      await WishlistRepository.deleteWishlist(id);
       res.status(204).end();
     } catch (error: any) {
       res.status(500).json({ message: error.message });
