@@ -119,4 +119,29 @@ interface VendorDetail {
   productCount: number;
 };
 
-export type { CustomRequest, EventDetail, ItemEventDetail, ItemProductDetail, OrderDetail, ProductDetail, ReviewDetail, VendorDetail };
+interface WishlistEventDetail {
+  id: number;
+  userId: number;
+  eventId: number;
+  eventName: string;
+  eventPrice: number;
+  eventDescription: string | null;
+  eventImage: string | null;
+  eventBundles: string | null;
+  eventRating: number;
+};
+
+interface WishlistProductDetail {
+  id: number;
+  userId: number;
+  productId: number;
+  productName: string;
+  productSpecification: string;
+  productPrice: number;
+  productImage: string | null;
+  productRating: number;
+  vendorId: number;
+  vendorAddress: string;
+};
+
+export type { CustomRequest, EventDetail, ItemEventDetail, ItemProductDetail, OrderDetail, ProductDetail, ReviewDetail, VendorDetail, WishlistEventDetail, WishlistProductDetail };

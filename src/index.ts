@@ -17,6 +17,7 @@ import productController from './controllers/product.controller';
 import reviewController from './controllers/review.controller';
 import vendorController from './controllers/vendor.controller';
 import visitController from './controllers/visit.controller';
+import wishlistController from './controllers/wishlist.controller';
 
 const app = express();
 const PORT = process.env.EXPRESS_APP_PORT;
@@ -40,6 +41,7 @@ app.use('/products', productController.getRoutes());
 app.use('/reviews', reviewController.getRoutes());
 app.use('/vendors', vendorController.getRoutes());
 app.use('/visits', visitController.getRoutes());
+app.use('/wishlists', wishlistController.getRoutes());
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

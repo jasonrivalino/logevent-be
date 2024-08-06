@@ -101,7 +101,7 @@ async function main() {
       cartId: eventOrganizerCart.id,
       name: 'Event Organizer Order',
       phone: '1234567890',
-      address: 'Event Organizer Order Address',
+      address: 'Jl. Ganesa No.10, Lb. Siliwangi, Kecamatan Coblong, Kota Bandung, Jawa Barat 40132',
       notes: 'Event Organizer Order Notes',
       startDate: getRandomDateWithinPastTwoMonth(),
       endDate: getRandomDateWithinPastTwoMonth(),

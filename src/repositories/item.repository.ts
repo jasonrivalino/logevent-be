@@ -123,7 +123,9 @@ class ItemRepository {
       throw new Error("Vendor not found");
     }
 
-    const reviews = await prisma.review.findMany({ where: { itemId: item.id } });
+    const items = await prisma.item.findMany({ where: { productId: product.id } });
+    const itemIds = items.map((item) => item.id);
+    const reviews = await prisma.review.findMany({ where: { itemId: { in: itemIds } } });
     const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
 
     let productRating = 0;

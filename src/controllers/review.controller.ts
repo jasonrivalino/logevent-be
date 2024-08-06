@@ -35,6 +35,16 @@ class ReviewController {
     }
   }
 
+  async readReviewByItemId(req: Request, res: Response) {
+    try {
+      const itemId = Number(req.params.itemId);
+      const review = await reviewRepository.findReviewDetailByItemId(itemId);
+      res.status(200).json(review);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async createReview(req: Request, res: Response) {
     try {
       const { itemId, rating, comment, tag } = req.body;
@@ -56,6 +66,7 @@ class ReviewController {
       .get("/read", this.readAllReviews)
       .get("/read/event/:eventId", this.readReviewsByEventId)
       .get("/read/product/:productId", this.readReviewsByProductId)
+      .get("/read/item/:itemId", this.readReviewByItemId)
       .post("/create", this.createReview)
   }
 }

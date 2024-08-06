@@ -41,6 +41,15 @@ class ReviewRepository {
     const reviews = await prisma.review.findMany({ where: { itemId: { in: itemIds } } });
     return Promise.all(reviews.map((review) => this.createReviewDetail(review)));
   }
+
+  async findReviewByItemId(itemId: number): Promise<Review | null> {
+    return prisma.review.findFirst({ where: { itemId } });
+  }
+
+  async findReviewDetailByItemId(itemId: number): Promise<ReviewDetail | null> {
+    const review = await prisma.review.findFirst({ where: { itemId } });
+    return review ? this.createReviewDetail(review) : null;
+  }
   
   async createReview(data: {
     itemId: number;

@@ -63,6 +63,7 @@ model Event {
   albums      Album[]
   bundles     Bundle[]
   items       Item[]
+  wishlists   Wishlist[]
 }
 
 model Faq {
@@ -118,6 +119,7 @@ model Product {
   albums        Album[]
   bundles       Bundle[]
   items         Item[]
+  wishlists     Wishlist[]
 }
 
 model Review {
@@ -142,6 +144,7 @@ model User {
   isVerified Boolean  @default(false)
 
   carts      Cart[]
+  wishlists  Wishlist[]
 }
 
 model Vendor {
@@ -163,4 +166,15 @@ model Visit {
   id        Int       @id @default(autoincrement())
   ipAddress String?
   visitDate DateTime  @default(now())
+}
+
+model Wishlist {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  eventId    Int?
+  productId  Int?
+
+  user       User     @relation(fields: [userId], references: [id])
+  event      Event?   @relation(fields: [eventId], references: [id])
+  product    Product? @relation(fields: [productId], references: [id])
 }
