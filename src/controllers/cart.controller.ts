@@ -30,6 +30,36 @@ class CartController {
     }
   }
 
+  async readActiveEventCartByUserId(req: Request, res: Response) {
+    try {
+      const userId = Number(req.params.userId);
+      const cart = await cartRepository.findActiveEventCartByUserId(userId);
+      if (!cart) {
+        return res.status(404).json({ message: "Active Event Cart not found" });
+      }
+
+      res.status(200).json(cart);
+    }
+    catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async readActiveProductCartByUserId(req: Request, res: Response) {
+    try {
+      const userId = Number(req.params.userId);
+      const cart = await cartRepository.findActiveProductCartByUserId(userId);
+      if (!cart) {
+        return res.status(404).json({ message: "Active Product Cart not found" });
+      }
+
+      res.status(200).json(cart);
+    }
+    catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async readCartById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
@@ -100,6 +130,8 @@ class CartController {
     return Router()
       .get("/read", this.readAllCarts)
       .get("/read/user/:userId", this.readCartsByUserId)
+      .get("/read/event/:userId", this.readActiveEventCartByUserId)
+      .get("/read/product/:userId", this.readActiveProductCartByUserId)
       .get("/read/:id", this.readCartById)
       .post("/create", this.createCart)
       .put("/update/:id", this.updateCart)

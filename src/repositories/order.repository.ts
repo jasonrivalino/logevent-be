@@ -52,6 +52,16 @@ class OrderRepository {
     return prisma.order.findUnique({ where: { id } });
   }
 
+  async findUpcomingOrders(): Promise<Order[]> {
+    return prisma.order.findMany({
+      where: {
+        endDate: {
+          gte: new Date(),
+        },
+      },
+    });
+  }
+
   async findOrderDetailById(id: number): Promise<OrderDetail | null> {
     const order = await prisma.order.findUnique({ where: { id } });
     return order ? this.createOrderDetail(order) : null;

@@ -14,6 +14,26 @@ class CartRepository {
     return prisma.cart.findMany({ where: { userId } });
   }
 
+  async findActiveEventCartByUserId(userId: number): Promise<Cart | null> {
+    return prisma.cart.findFirst({
+      where: {
+        userId,
+        type: "Event",
+        cartStatus: "Active",
+      },
+    });
+  }
+
+  async findActiveProductCartByUserId(userId: number): Promise<Cart | null> {
+    return prisma.cart.findFirst({
+      where: {
+        userId,
+        type: "Product",
+        cartStatus: "Active",
+      },
+    });
+  }
+
   async findCartById(id: number): Promise<Cart | null> {
     return prisma.cart.findUnique({ where: { id } });
   }

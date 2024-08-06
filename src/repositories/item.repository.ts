@@ -53,6 +53,12 @@ class ItemRepository {
     return prisma.item.update({ where: { id }, data });
   }
 
+  async deleteItemsByCartId(cartId: number): Promise<Item[]> {
+    const itemsToDelete = await prisma.item.findMany({ where: { cartId } });
+    await prisma.item.deleteMany({ where: { cartId } });
+    return itemsToDelete;
+  }
+
   async deleteItem(id: number): Promise<Item> {
     return prisma.item.delete({ where: { id } });
   }

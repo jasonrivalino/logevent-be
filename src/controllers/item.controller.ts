@@ -98,6 +98,16 @@ class ItemController {
     }
   }
 
+  async deleteItemsByCartId(req: Request, res: Response) {
+    try {
+      const cartId = Number(req.params.cartId);
+      await itemRepository.deleteItemsByCartId(cartId);
+      res.status(204).end();
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async deleteItem(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
@@ -122,6 +132,7 @@ class ItemController {
       .get("/read/:id", this.readItemById)
       .post("/create", this.createItem)
       .put("/update/:id", this.updateItem)
+      .delete("/delete/cart/:cartId", this.deleteItemsByCartId)
       .delete("/delete/:id", this.deleteItem);
   }
 }
