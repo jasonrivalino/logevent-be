@@ -56,70 +56,6 @@ async function main() {
     },
   });
 
-  // Create 1 Event Organizer Category
-  const eventOrganizerCategory = await prisma.category.create({
-    data: {
-      name: 'Event Organizer Category',
-      type: 'Event Organizer',
-    },
-  });
-
-  // Create 1 Event Organizer Product
-  const eventOrganizerProduct = await prisma.product.create({
-    data: {
-      vendorId: adminVendor.id,
-      categoryId: eventOrganizerCategory.id,
-      name: 'Event Organizer Product',
-      specification: 'Event Organizer Product Specification',
-      rate: 'Daily',
-      price: 0,
-      description: 'Event Organizer Product Description',
-      productImage: '/Image/planetarium.jpg'
-    },
-  });
-
-  // Create 1 Event Organizer Cart
-  const eventOrganizerCart = await prisma.cart.create({
-    data: {
-      userId: admin.id,
-      type: 'Event Organizer',
-      cartStatus: 'Checked Out'
-    },
-  });
-
-  // Create 1 Event Organizer Item
-  const eventOrganizerItem = await prisma.item.create({
-    data: {
-      cartId: eventOrganizerCart.id,
-      productId: eventOrganizerProduct.id,
-    },
-  });
-
-  // Create 1 Event Organizer Order
-  await prisma.order.create({
-    data: {
-      cartId: eventOrganizerCart.id,
-      name: 'Event Organizer Order',
-      phone: '1234567890',
-      address: 'Jl. Ganesa No.10, Lb. Siliwangi, Kecamatan Coblong, Kota Bandung, Jawa Barat 40132',
-      notes: 'Event Organizer Order Notes',
-      startDate: getRandomDateWithinPastTwoMonth(),
-      endDate: getRandomDateWithinPastTwoMonth(),
-      orderDate: getRandomDateWithinPastTwoMonth(),
-      orderStatus: 'Completed'
-    },
-  });
-
-  // Create 1 Event Organizer Review
-  await prisma.review.create({
-    data: {
-      itemId: eventOrganizerItem.id,
-      rating: 5,
-      comment: 'Event Organizer Review Comment',
-      tag: 'Event Organizer Review Tag',
-    },
-  });
-
   // Create 5 Users
   const userCount = 5;
   const users: User[] = [];
@@ -166,6 +102,62 @@ async function main() {
     });
     productCategories.push(productCategory);
   }
+
+  // Create 1 Event Organizer Product
+  const eventOrganizerProduct = await prisma.product.create({
+    data: {
+      vendorId: adminVendor.id,
+      categoryId: productCategories[Math.floor(Math.random() * productCategoryCount)].id,
+      name: 'Event Organizer Product',
+      specification: 'Event Organizer Product Specification',
+      rate: 'Daily',
+      price: 0,
+      description: 'Event Organizer Product Description',
+      productImage: '/Image/planetarium.jpg'
+    },
+  });
+
+  // Create 1 Event Organizer Cart
+  const eventOrganizerCart = await prisma.cart.create({
+    data: {
+      userId: admin.id,
+      type: 'Product',
+      cartStatus: 'Checked Out'
+    },
+  });
+
+  // Create 1 Event Organizer Item
+  const eventOrganizerItem = await prisma.item.create({
+    data: {
+      cartId: eventOrganizerCart.id,
+      productId: eventOrganizerProduct.id,
+    },
+  });
+
+  // Create 1 Event Organizer Order
+  await prisma.order.create({
+    data: {
+      cartId: eventOrganizerCart.id,
+      name: 'Event Organizer Order',
+      phone: '1234567890',
+      address: 'Event Organizer Order Address',
+      notes: 'Event Organizer Order Notes',
+      startDate: getRandomDateWithinPastTwoMonth(),
+      endDate: getRandomDateWithinPastTwoMonth(),
+      orderDate: getRandomDateWithinPastTwoMonth(),
+      orderStatus: 'Completed'
+    },
+  });
+
+  // Create 1 Event Organizer Review
+  await prisma.review.create({
+    data: {
+      itemId: eventOrganizerItem.id,
+      rating: 5,
+      comment: 'Event Organizer Review Comment',
+      tag: 'Event Organizer Review Tag',
+    },
+  });
 
   // Create 100 Products
   const rates = ["Quantity", "Hourly", "Daily"];
@@ -258,7 +250,7 @@ async function main() {
   }
 
   // Create 100 Carts
-  const types = ["Event Organizer", "Product", "Event"];
+  const types = ["Product", "Event"];
   const cartCount = 100;
   const carts: Cart[] = [];
   for (let i = 0; i < cartCount; i++) {

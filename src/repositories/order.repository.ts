@@ -2,6 +2,7 @@
 
 // dependency modules
 import { Order } from "@prisma/client";
+import { toZonedTime, format } from 'date-fns-tz';
 // self-defined modules
 import prisma from "../utils/prisma";
 import { OrderDetail } from "../utils/types";
@@ -27,16 +28,6 @@ class OrderRepository {
     return Promise.all(orders.map((order) => this.createOrderDetail(order)));
   }
 
-  async findPastMonthOrders(): Promise<Order[]> {
-    return prisma.order.findMany({
-      where: {
-        orderDate: {
-          gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
-        },
-      },
-    });
-  }
-
   async findPastTwoMonthOrderDetails(chosenDate: Date): Promise<OrderDetail[]> {
     const orders = await prisma.order.findMany({
       where: {
@@ -52,14 +43,70 @@ class OrderRepository {
     return prisma.order.findUnique({ where: { id } });
   }
 
-  async findUpcomingOrders(): Promise<Order[]> {
-    return prisma.order.findMany({
+  async findOrderAvailabilityByCartId(cartId: number): Promise<string[]> {
+    const cart = await prisma.cart.findUnique({ where: { id: cartId } });
+    if (!cart) {
+      throw new Error("Cart not found");
+    }
+
+    const productIds: Set<number> = new Set();
+    if (cart.type === 'Event') {
+      const items = await prisma.item.findMany({
+        where: { cartId: cartId, eventId: { not: null } },
+        include: { event: true },
+      });
+      for (const item of items) {
+        if (item.eventId) {
+          const bundles = await prisma.bundle.findMany({ where: { eventId: item.eventId } });
+          bundles.forEach(bundle => productIds.add(bundle.productId));
+        }
+      }
+    } else if (cart.type === 'Product') {
+      const items = await prisma.item.findMany({
+        where: { cartId: cartId, productId: { not: null } },
+        include: { product: true },
+      });
+      for (const item of items) {
+        if (item.productId) {
+          productIds.add(item.productId);
+        }
+      }
+    }
+
+    const upcomingOrders = await prisma.order.findMany({
       where: {
         endDate: {
           gte: new Date(),
         },
       },
+      include: {
+        cart: {
+          include: { items: true },
+        },
+      },
     });
+
+    const bookedDates: Set<string> = new Set();
+    for (const order of upcomingOrders) {
+      for (const orderItem of order.cart.items) {
+        const bundleProductIds = new Set<number>();
+        if (orderItem.eventId) {
+          const bundles = await prisma.bundle.findMany({ where: { eventId: orderItem.eventId } });
+          bundles.forEach(bundle => bundleProductIds.add(bundle.productId));
+        }
+  
+        if ((orderItem.productId && productIds.has(orderItem.productId)) || 
+            [...bundleProductIds].some(id => productIds.has(id))) {
+          let currentDate = new Date(order.startDate);
+          while (currentDate <= order.endDate) {
+            bookedDates.add(format(toZonedTime(currentDate, 'Asia/Jakarta'), 'yyyy-MM-dd'));
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+        }
+      }
+    }
+
+    return Array.from(bookedDates);
   }
 
   async findOrderDetailById(id: number): Promise<OrderDetail | null> {
