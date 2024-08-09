@@ -1,3 +1,6 @@
+// src/utils/nodemailer.ts
+
+// dependency modules
 import nodemailer from 'nodemailer';
 
 class NodemailerUtils {
@@ -9,7 +12,7 @@ class NodemailerUtils {
     },
   });
 
-  sendMail(mailOptions: nodemailer.SendMailOptions) {
+  async sendMail(mailOptions: nodemailer.SendMailOptions) {
     return this.transporter.sendMail(mailOptions);
   }
 
@@ -18,7 +21,29 @@ class NodemailerUtils {
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'Verify your email',
-      text: `Click on the link to verify your email: ${process.env.CLIENT_URL}/verify-email/${token}`,
+      text: `Click on the link to verify your email: ${process.env.REACT_APP_URL}/email-verification?token=${token}`,
+    };
+
+    return this.sendMail(mailOptions);
+  }
+
+  async sendPasswordResetEmail(email: string, token: string) {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Reset your password',
+      text: `Click on the link to reset your password: ${process.env.REACT_APP_URL}/reset-password?token=${token}`,
+    };
+
+    return this.sendMail(mailOptions);
+  }
+
+  async sendNewOrderEmail(email: string, orderId: number, token: string) {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Order confirmation',
+      text: `Your order with id ${orderId} is recorded. Click on the link to view your order: ${process.env.REACT_APP_URL}/order/${orderId}?token=${token}`,
     };
 
     return this.sendMail(mailOptions);

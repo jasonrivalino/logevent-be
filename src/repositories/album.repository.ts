@@ -1,4 +1,8 @@
+// src/repositories/album.repository.ts
+
+// dependency modules
 import { Album } from "@prisma/client";
+// self-defined modules
 import prisma from "../utils/prisma";
 
 class AlbumRepository {
@@ -10,13 +14,18 @@ class AlbumRepository {
     return prisma.album.findUnique({ where: { id } });
   }
 
+  async findAlbumsByEventId(eventId: number): Promise<Album[]> {
+    return prisma.album.findMany({ where: { eventId } });
+  }
+
   async findAlbumsByProductId(productId: number): Promise<Album[]> {
     return prisma.album.findMany({ where: { productId } });
   }
 
   async createAlbum(data: {
-    productId: number;
-    productImage: string | null;
+    eventId: number | null;
+    productId: number | null;
+    albumImage: string | null;
   }): Promise<Album> {
     return prisma.album.create({ data });
   }

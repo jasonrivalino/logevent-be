@@ -1,3 +1,6 @@
+// src/utils/jwt.ts
+
+// dependency modules
 import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
 
 class JwtUtils {
@@ -8,7 +11,7 @@ class JwtUtils {
   }
 
   sign(payload: JwtPayload) {
-    return jwt.sign(payload, this.secret);
+    return jwt.sign(payload, this.secret, { expiresIn: '1h' });
   }
 
   verify(token: string) {

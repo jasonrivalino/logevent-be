@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,68 +10,171 @@ datasource db {
 }
 
 model Album {
-  id           Int      @id @default(autoincrement())
-  productId    Int
-  productImage String?  @db.Text
+  id         Int       @id @default(autoincrement())
+  eventId    Int?
+  productId  Int?
+  albumImage String?   @db.Text
 
-  product   Product     @relation(fields: [productId], references: [id])
+  event      Event?    @relation(fields: [eventId], references: [id])
+  product    Product?  @relation(fields: [productId], references: [id])
+}
+
+model Bundle {
+  id        Int      @id @default(autoincrement())
+  eventId   Int
+  productId Int
+
+  event     Event    @relation(fields: [eventId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Cart {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  type       String
+  cartDate   DateTime @default(now())
+  cartStatus String   @default("Active")
+
+  user       User     @relation(fields: [userId], references: [id])
+  items      Item[]
+  orders     Order[]
+}
+
+model Category {
+  id       Int        @id @default(autoincrement())
+  name     String
+  type     String
+
+  events   Event[]
+  products Product[]
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  categoryId  Int
+  name        String
+  price       Float
+  capacity    Int?
+  description String?  @db.Text
+  eventImage  String?  @db.Text
+  isDeleted   Boolean  @default(false)
+
+  category    Category @relation(fields: [categoryId], references: [id])
+  albums      Album[]
+  bundles     Bundle[]
+  items       Item[]
+  wishlists   Wishlist[]
+}
+
+model Faq {
+  id       Int     @id @default(autoincrement())
+  question String
+  answer   String
+}
+
+model Item {
+  id            Int        @id @default(autoincrement())
+  cartId        Int
+  eventId       Int?
+  productId     Int?
+  duration      Int?
+  quantity      Int?
+
+  cart          Cart       @relation(fields: [cartId], references: [id])
+  event         Event?     @relation(fields: [eventId], references: [id])
+  product       Product?   @relation(fields: [productId], references: [id])
+  reviews       Review[]
 }
 
 model Order {
-  id         Int       @id @default(autoincrement())
-  productId  Int
-  name       String
-  phone      String
-  email      String
-  address    String
-  usageDate  DateTime
-  orderDate  DateTime  @default(now())
-  orderImage String?   @db.Text
+  id          Int       @id @default(autoincrement())
+  cartId      Int
+  name        String
+  phone       String
+  address     String
+  notes       String?   @db.Text
+  startDate   DateTime
+  endDate     DateTime
+  orderDate   DateTime  @default(now())
+  orderStatus String    @default("Pending")
 
-  product   Product    @relation(fields: [productId], references: [id])
-  reviews   Review[]
+  cart        Cart      @relation(fields: [cartId], references: [id])
 }
 
 model Product {
   id            Int      @id @default(autoincrement())
   vendorId      Int
+  categoryId    Int
   name          String
   specification String
-  category      String
+  rate          String
   price         Float
+  capacity      Int?
   description   String?  @db.Text
-
+  productImage  String?  @db.Text
+  isDeleted     Boolean  @default(false)
+  
   vendor        Vendor   @relation(fields: [vendorId], references: [id])
+  category      Category @relation(fields: [categoryId], references: [id])
   albums        Album[]
-  orders        Order[]
+  bundles       Bundle[]
+  items         Item[]
+  wishlists     Wishlist[]
 }
 
 model Review {
   id         Int       @id @default(autoincrement())
-  orderId    Int
+  itemId     Int
   rating     Int
-  comment    String
+  comment    String?
+  tag        String?
   reviewDate DateTime  @default(now())
 
-  order      Order     @relation(fields: [orderId], references: [id])
+  item       Item      @relation(fields: [itemId], references: [id])
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  password String?
-  name     String?
-  phone    String?
-  picture  String?  @db.Text
-  isAdmin  Boolean  @default(false)
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String?
+  name       String
+  phone      String?
+  picture    String?  @db.Text
+  isAdmin    Boolean  @default(false)
+  isVerified Boolean  @default(false)
+
+  carts      Cart[]
+  wishlists  Wishlist[]
 }
 
 model Vendor {
-  id       Int      @id @default(autoincrement())
-  name     String   @unique
-  phone    String
-  address  String
-  picture  String?  @db.Text
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  name        String
+  phone       String
+  address     String
+  instagram   String?
+  socialMedia String?
+  documentUrl String?   @db.Text
+  joinDate    DateTime  @default(now())
+  isDeleted   Boolean   @default(false)
 
   products Product[]
+}
+
+model Visit {
+  id        Int       @id @default(autoincrement())
+  ipAddress String?
+  visitDate DateTime  @default(now())
+}
+
+model Wishlist {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  eventId    Int?
+  productId  Int?
+
+  user       User     @relation(fields: [userId], references: [id])
+  event      Event?   @relation(fields: [eventId], references: [id])
+  product    Product? @relation(fields: [productId], references: [id])
 }
