@@ -355,8 +355,8 @@ async function main() {
     });
   }
 
-  // Create 100 Faqs
-  const faqCount = 100;
+  // Create 5 Faqs
+  const faqCount = 5;
   for (let i = 0; i < faqCount; i++) {
     await prisma.faq.create({
       data: {
