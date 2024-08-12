@@ -2,6 +2,8 @@
 
 // dependency modules
 import nodemailer from 'nodemailer';
+// self-defined modules
+import invoiceUtils from './invoice';
 
 class NodemailerUtils {
   private transporter = nodemailer.createTransport({
@@ -38,12 +40,23 @@ class NodemailerUtils {
     return this.sendMail(mailOptions);
   }
 
-  async sendNewOrderEmail(email: string, orderId: number, token: string) {
+  // TODO: Fix Send New Order Email
+  async sendNewOrderEmail(email: string, invoiceData: any) {
+    const invoiceHtml = await invoiceUtils.generateOrderInvoiceHtml(invoiceData);
+    
+    const jpgFilePath = `/tmp/invoice-${invoiceData.invoiceNumber}.jpg`;
+    await invoiceUtils.generateOrderInvoiceJpg(invoiceHtml);
+    const jpgAttachment = {
+      filename: 'invoice.jpg',
+      path: jpgFilePath,
+    };
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Order confirmation',
-      text: `Your order with id ${orderId} is recorded. Click on the link to view your order: ${process.env.REACT_APP_URL}/order/${orderId}?token=${token}`,
+      subject: `Invoice for Order ${invoiceData.invoiceNumber}`,
+      html: invoiceHtml,
+      attachments: [jpgAttachment],
     };
 
     return this.sendMail(mailOptions);

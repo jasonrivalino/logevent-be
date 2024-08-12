@@ -34,10 +34,10 @@ async function main() {
   const hashedPassword = await hash('password', 10);
   const admin = await prisma.user.create({
     data: {
-      email: 'admin@gmail.com',
+      email: 'logevent.eo@gmail.com',
       password: hashedPassword,
       name: 'Admin',
-      phone: '1234567890',
+      phone: '6289520771715',
       isAdmin: true,
       isVerified: true,
     },
@@ -46,11 +46,11 @@ async function main() {
   // Create 1 Admin Vendor
   const adminVendor = await prisma.vendor.create({
     data: {
-      email: 'vendoradmin@gmail.com',
+      email: 'logevent.eo@gmail.com',
       name: 'Vendor Admin',
-      phone: '1234567890',
-      address: 'Vendor Admin Address',
-      instagram: 'vendoradmin',
+      phone: '6289520771715',
+      address: 'Jl. Ganesa No. 10 Coblong, Kota Bandung, Jawa Barat Indonesia 40132',
+      instagram: 'logevent.eo',
       socialMedia: 'Vendor Admin Social Media',
       documentUrl: 'https://drive.google.com/file/d/1W1gWA621MB6zq-JU3xsPni2QB8VxmaCn/view?usp=drive_link',
     },
@@ -159,7 +159,7 @@ async function main() {
     },
   });
 
-  // Create 100 Products
+  // Create 10 Products
   const rates = ["Quantity", "Hourly", "Daily"];
   const images = [
     "/Image/landingpage1.jpg",
@@ -168,7 +168,7 @@ async function main() {
     "/Image/planetarium.jpg",
     "/Image/partyevent.jpg"
   ];
-  const productCount = 100;
+  const productCount = 10;
   const products: Product[] = [];
   for (let i = 0; i < productCount; i++) {
     const product = await prisma.product.create({
@@ -187,8 +187,8 @@ async function main() {
     products.push(product);
   }
 
-  // Create 100 Product Albums
-  const albumCount = 100;
+  // Create 10 Product Albums
+  const albumCount = 10;
   for (let i = 0; i < albumCount; i++) {
     await prisma.album.create({
       data: {
@@ -211,8 +211,8 @@ async function main() {
     eventCategories.push(eventCategory);
   }
 
-  // Create 100 Events
-  const eventCount = 100;
+  // Create 10 Events
+  const eventCount = 10;
   const events: Event[] = [];
   for (let i = 0; i < eventCount; i++) {
     const event = await prisma.event.create({
@@ -228,7 +228,7 @@ async function main() {
     events.push(event);
   }
 
-  // Create 100 Event Albums
+  // Create 10 Event Albums
   for (let i = 0; i < albumCount; i++) {
     await prisma.album.create({
       data: {
@@ -238,8 +238,8 @@ async function main() {
     });
   }
 
-  // Create 100 Bundles
-  const bundleCount = 100;
+  // Create 10 Bundles
+  const bundleCount = 10;
   for (let i = 0; i < bundleCount; i++) {
     await prisma.bundle.create({
       data: {
@@ -249,9 +249,9 @@ async function main() {
     });
   }
 
-  // Create 100 Carts
+  // Create 10 Carts
   const types = ["Product", "Event"];
-  const cartCount = 100;
+  const cartCount = 10;
   const carts: Cart[] = [];
   for (let i = 0; i < cartCount; i++) {
     const cart = await prisma.cart.create({
@@ -264,8 +264,8 @@ async function main() {
     carts.push(cart);
   }
 
-  // Create 100 Product Items
-  const productItemCount = 100;
+  // Create 10 Product Items
+  const productItemCount = 10;
   const productItems: Item[] = [];
   for (let i = 0; i < productItemCount; i++) {
     let cart = carts[Math.floor(Math.random() * cartCount)];
@@ -293,8 +293,8 @@ async function main() {
     productItems.push(productItem);
   }
 
-  // Create 100 Event Items
-  const eventItemCount = 100;
+  // Create 10 Event Items
+  const eventItemCount = 10;
   const eventItems: Item[] = [];
   for (let i = 0; i < eventItemCount; i++) {
     let cart = carts[Math.floor(Math.random() * cartCount)];
@@ -311,8 +311,8 @@ async function main() {
     eventItems.push(eventItem);
   }
 
-  // Create 100 Orders
-  const orderCount = 100;
+  // Create 10 Orders
+  const orderCount = 10;
   for (let i = 0; i < orderCount; i++) {
     await prisma.order.create({
       data: {
@@ -329,8 +329,8 @@ async function main() {
     });
   }
 
-  // Create 100 Product Reviews
-  const productReviewCount = 100;
+  // Create 10 Product Reviews
+  const productReviewCount = 10;
   for (let i = 0; i < productReviewCount; i++) {
     await prisma.review.create({
       data: {
@@ -342,8 +342,8 @@ async function main() {
     });
   }
 
-  // Create 100 Event Reviews
-  const eventReviewCount = 100;
+  // Create 10 Event Reviews
+  const eventReviewCount = 10;
   for (let i = 0; i < eventReviewCount; i++) {
     await prisma.review.create({
       data: {
@@ -366,8 +366,8 @@ async function main() {
     });
   }
 
-  // Create 100 Visits
-  const visitCount = 100;
+  // Create 10 Visits
+  const visitCount = 10;
   for (let i = 0; i < visitCount; i++) {
     await prisma.visit.create({
       data: {

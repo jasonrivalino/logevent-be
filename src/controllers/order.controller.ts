@@ -69,6 +69,7 @@ class OrderController {
     }
   }
 
+  // TODO: Fix Create Order
   async createOrder(req: Request, res: Response) {
     try {
       const { cartId, name, phone, address, notes, startDate, endDate } = req.body;
@@ -92,10 +93,8 @@ class OrderController {
         return res.status(404).json({ message: "User not found" });
       }
 
-      const userId = cart.userId;
       const userEmail = user.email;
-      const token = jwtUtils.sign({ id: userId });
-      await nodemailerUtils.sendNewOrderEmail(userEmail, newOrder.id, token);
+      await nodemailerUtils.sendNewOrderEmail(userEmail, newOrder);
 
       res.status(201).json(newOrder);
     } catch (error: any) {
