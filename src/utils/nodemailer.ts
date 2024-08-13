@@ -4,6 +4,7 @@
 import nodemailer from 'nodemailer';
 // self-defined modules
 import invoiceUtils from './invoice';
+import { ItemEventDetail, ItemProductDetail, OrderDetail} from './types';
 
 class NodemailerUtils {
   private transporter = nodemailer.createTransport({
@@ -41,22 +42,14 @@ class NodemailerUtils {
   }
 
   // TODO: Fix Send New Order Email
-  async sendNewOrderEmail(email: string, invoiceData: any) {
-    const invoiceHtml = await invoiceUtils.generateOrderInvoiceHtml(invoiceData);
-    
-    const jpgFilePath = `/tmp/invoice-${invoiceData.invoiceNumber}.jpg`;
-    await invoiceUtils.generateOrderInvoiceJpg(invoiceHtml);
-    const jpgAttachment = {
-      filename: 'invoice.jpg',
-      path: jpgFilePath,
-    };
+  async sendNewOrderEmail(email: string, order: OrderDetail, items: (ItemEventDetail | ItemProductDetail)[]) {
+    const invoiceHtml = await invoiceUtils.generateOrderInvoiceHtml(order, items);
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: `Invoice for Order ${invoiceData.invoiceNumber}`,
-      html: invoiceHtml,
-      attachments: [jpgAttachment],
+      subject: `Invoice for Order ${order.id}`,
+      html: invoiceHtml
     };
 
     return this.sendMail(mailOptions);

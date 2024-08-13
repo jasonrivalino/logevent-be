@@ -146,7 +146,7 @@ class OrderRepository {
     }
 
     let orderTotal = 0;
-    const orderRange = Math.floor((order.endDate.getTime() - order.startDate.getTime()) / (1000 * 3600 * 24));
+    const orderRange = 1 + Math.floor((order.endDate.getTime() - order.startDate.getTime()) / (1000 * 3600 * 24));
     const items = await prisma.item.findMany({ where: { cartId: cart.id } });
     for (const item of items) {
       if (item.eventId) {

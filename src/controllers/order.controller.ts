@@ -3,13 +3,12 @@
 // dependency modules
 import { Request, Response, Router } from "express";
 // self-defined modules
-import bundleRepository from "../repositories/bundle.repository";
 import cartRepository from "../repositories/cart.repository";
 import itemRepository from "../repositories/item.repository";
 import orderRepository from "../repositories/order.repository";
 import userRepository from "../repositories/user.repository";
-import jwtUtils from "../utils/jwt";
 import nodemailerUtils from "../utils/nodemailer";
+import { ItemEventDetail, ItemProductDetail } from '../utils/types';
 
 class OrderController {
   async readAllOrders(req: Request, res: Response) {
@@ -94,8 +93,19 @@ class OrderController {
       }
 
       const userEmail = user.email;
-      await nodemailerUtils.sendNewOrderEmail(userEmail, newOrder);
+      const orderDetail = await orderRepository.findOrderDetailById(newOrder.id);
+      if (!orderDetail) {
+        return res.status(404).json({ message: "Order not found" });
+      }
 
+      let items: (ItemEventDetail | ItemProductDetail)[] = [];
+      if (cart.type === "Event") {
+        items = await itemRepository.findItemsEventDetailsByCartId(cartId);
+      } else if (cart.type === "Product") {
+        items = await itemRepository.findItemsProductDetailsByCartId(cartId);
+      }
+
+      await nodemailerUtils.sendNewOrderEmail(userEmail, orderDetail, items);
       res.status(201).json(newOrder);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
