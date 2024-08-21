@@ -137,6 +137,7 @@ interface WishlistProductDetail {
   productId: number;
   productName: string;
   productSpecification: string;
+  productRate: string;
   productPrice: number;
   productImage: string | null;
   productRating: number;

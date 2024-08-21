@@ -139,6 +139,83 @@ class OrderController {
     }
   }
 
+  async confirmOrderPayment(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const order = await orderRepository.findOrderById(id);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      const updatedOrder = await orderRepository.updateOrder(id, {
+        orderStatus: "Completed"
+      });
+
+      const cart = await cartRepository.findCartById(order.cartId);
+      if (!cart) {
+        return res.status(404).json({ message: "Cart not found" });
+      }
+
+      const user = await userRepository.findUserById(cart.userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const userEmail = user.email;
+      const orderDetail = await orderRepository.findOrderDetailById(updatedOrder.id);
+      if (!orderDetail) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      let items: (ItemEventDetail | ItemProductDetail)[] = [];
+      if (cart.type === "Event") {
+        items = await itemRepository.findItemsEventDetailsByCartId(order.cartId);
+      } else if (cart.type === "Product") {
+        items = await itemRepository.findItemsProductDetailsByCartId(order.cartId);
+      }
+
+      await nodemailerUtils.sendPaidOrderEmail(userEmail, orderDetail, items);
+      res.status(200).json(updatedOrder);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async cancelOrder(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const order = await orderRepository.findOrderById(id);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      const updatedOrder = await orderRepository.updateOrder(id, {
+        orderStatus: "Cancelled"
+      });
+
+      const cart = await cartRepository.findCartById(order.cartId);
+      if (!cart) {
+        return res.status(404).json({ message: "Cart not found" });
+      }
+
+      const user = await userRepository.findUserById(cart.userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const userEmail = user.email;
+      const orderDetail = await orderRepository.findOrderDetailById(updatedOrder.id);
+      if (!orderDetail) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      await nodemailerUtils.sendCancelOrderEmail(userEmail, orderDetail);
+      res.status(200).json(updatedOrder);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async deleteOrder(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
@@ -163,6 +240,8 @@ class OrderController {
       .get("/read/:id", this.readOrderById)
       .post("/create", this.createOrder)
       .put("/update/:id", this.updateOrder)
+      .put("/confirm-payment/:id", this.confirmOrderPayment)
+      .put("/cancel/:id", this.cancelOrder)
       .delete("/delete/:id", this.deleteOrder);
   }
 }

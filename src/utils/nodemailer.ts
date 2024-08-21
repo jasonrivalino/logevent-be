@@ -43,13 +43,39 @@ class NodemailerUtils {
 
   // TODO: Fix Send New Order Email
   async sendNewOrderEmail(email: string, order: OrderDetail, items: (ItemEventDetail | ItemProductDetail)[]) {
-    const invoiceHtml = await invoiceUtils.generateOrderInvoiceHtml(order, items);
+    const invoiceHtml = await invoiceUtils.generateInvoiceBillHtml(order, items);
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: `Invoice for Order ${order.id}`,
+      subject: `Invoice Tagihan Pemesanan Logevent`,
       html: invoiceHtml
+    };
+
+    return this.sendMail(mailOptions);
+  }
+
+  // TODO: Fix Send Paid Order Email
+  async sendPaidOrderEmail(email: string, order: OrderDetail, items: (ItemEventDetail | ItemProductDetail)[]) {
+    const invoiceHtml = await invoiceUtils.generateInvoicePaidHtml(order, items);
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: `Invoice Pelunasan Pemesanan Logevent`,
+      html: invoiceHtml
+    };
+
+    return this.sendMail(mailOptions);
+  }
+
+  // TODO: Fix Send Cancel Order Email
+  async sendCancelOrderEmail(email: string, order: OrderDetail) {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: `Pemesanan Logevent Dibatalkan`,
+      text: `Pemesanan dengan ID ${order.id} telah dibatalkan.`
     };
 
     return this.sendMail(mailOptions);
