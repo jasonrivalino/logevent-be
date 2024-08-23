@@ -130,10 +130,23 @@ class InvoiceUtils {
           <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 80px;">
             <tr>
               <td valign="top" style="width: 50%; padding-right: 10px;">
-                <p style="margin: 0;"><strong>Payment Info:</strong></p>
-                <p style="margin: 0;">Account No: 102470393708</p>
-                <p style="margin: 0;">A.C Name: Satria Octavianus Nababan</p>
-                <p style="margin: 0;">Bank Details: Bank Jago</p>
+                <table>
+                  <tr>
+                    <td style="margin: 0;"><strong>Payment Info:</strong></td>
+                  </tr>
+                  <tr>
+                    <td style="margin: 0;">Account No</td>
+                    <td style="margin: 0;">: 102470393708</td>
+                  </tr>
+                  <tr>
+                    <td style="margin: 0;">A.C Name</td>
+                    <td style="margin: 0;">: Satria Octavianus Nababan</td>
+                  </tr>
+                  <tr>
+                    <td style="margin: 0;">Bank Details</td>
+                    <td style="margin: 0;">: Bank Jago</td>
+                  </tr>
+                </table>
               </td>
               
               <td valign="top" style="width: 50%; text-align: right;">

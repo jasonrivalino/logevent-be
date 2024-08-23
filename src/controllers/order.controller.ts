@@ -184,6 +184,7 @@ class OrderController {
   async cancelOrder(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
+      const { cancelMessage } = req.body;
       const order = await orderRepository.findOrderById(id);
       if (!order) {
         return res.status(404).json({ message: "Order not found" });
@@ -209,7 +210,7 @@ class OrderController {
         return res.status(404).json({ message: "Order not found" });
       }
 
-      await nodemailerUtils.sendCancelOrderEmail(userEmail, orderDetail);
+      await nodemailerUtils.sendCancelOrderEmail(userEmail, orderDetail, cancelMessage);
       res.status(200).json(updatedOrder);
     } catch (error: any) {
       res.status(500).json({ message: error.message });

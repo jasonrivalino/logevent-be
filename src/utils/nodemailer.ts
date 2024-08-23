@@ -66,16 +66,23 @@ class NodemailerUtils {
       html: invoiceHtml
     };
 
+    const adminMailOptions = {
+      from: process.env.EMAIL_USER,
+      to: process.env.ADMIN_EMAIL,
+      subject: `Invoice Pelunasan Pemesanan Logevent`,
+      html: invoiceHtml
+    };
+
     return this.sendMail(mailOptions);
   }
 
   // TODO: Fix Send Cancel Order Email
-  async sendCancelOrderEmail(email: string, order: OrderDetail) {
+  async sendCancelOrderEmail(email: string, order: OrderDetail, cancelMessage: string) {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
       subject: `Pemesanan Logevent Dibatalkan`,
-      text: `Pemesanan dengan ID ${order.id} telah dibatalkan.`
+      text: `Pemesanan Logevent Anda dibatalkan karena alasan berikut: ${cancelMessage}`
     };
 
     return this.sendMail(mailOptions);
