@@ -86,18 +86,36 @@ class InvoiceUtils {
             <tbody>
               ${items.map((item) => {
                 if ('eventId' in item) {
+                  const totalPrice = Math.ceil(
+                    item.eventPrice *
+                    this.calculateDaysBetweenDates(order.startDate, order.endDate) *
+                    (1 + item.categoryFee / 100)
+                  );
+
                   return `
                     <tr>
-                      <td>${item.eventName}</td>
+                      <td>
+                        ${item.eventName}<br>
+                        <small>Biaya Layanan: ${item.categoryFee.toFixed(2)}%</small>
+                      </td>
                       <td>Rp ${item.eventPrice.toLocaleString()}</td>
                       <td>${this.calculateDaysBetweenDates(order.startDate, order.endDate)} Hari</td>
-                      <td>Rp ${(item.eventPrice*this.calculateDaysBetweenDates(order.startDate, order.endDate)).toLocaleString()}</td>
+                      <td>Rp ${totalPrice.toLocaleString()}</td>
                     </tr>
                   `;
                 } else {
+                  const totalPrice = item.duration !== null
+                  ? Math.ceil(item.productPrice * item.duration * (1 + item.categoryFee / 100))
+                  : item.quantity !== null
+                  ? Math.ceil(item.productPrice * item.quantity * (1 + item.categoryFee / 100))
+                  : Math.ceil(item.productPrice * this.calculateDaysBetweenDates(order.startDate, order.endDate) * (1 + item.categoryFee / 100));
+
                   return `
                     <tr>
-                      <td>${item.productName}</td>
+                      <td>
+                        ${item.productName}<br>
+                        <small>Biaya Layanan: ${item.categoryFee.toFixed(2)}%</small>
+                      </td>
                       <td>Rp ${item.productPrice.toLocaleString()}</td>
                       <td>
                         ${
@@ -108,15 +126,7 @@ class InvoiceUtils {
                             : this.calculateDaysBetweenDates(order.startDate, order.endDate) + " Hari"
                         }
                       </td>
-                      <td>
-                        Rp ${
-                          item.duration !== null
-                            ? (item.productPrice * item.duration).toLocaleString()
-                            : item.quantity !== null
-                            ? (item.productPrice * item.quantity).toLocaleString()
-                            : (item.productPrice * this.calculateDaysBetweenDates(order.startDate, order.endDate)).toLocaleString()
-                        }
-                      </td>
+                      <td>Rp ${totalPrice.toLocaleString()}</td>
                     </tr>
                   `;
                 }
@@ -150,9 +160,7 @@ class InvoiceUtils {
               </td>
               
               <td valign="top" style="width: 50%; text-align: right;">
-                <p style="margin: 0;">Sub Total: <strong>Rp ${order.orderTotal.toLocaleString()}</strong></p>
-                <p style="margin: 0;">Biaya Layanan: <strong>1.75%</strong></p>
-                <p style="margin: 0;"><strong>Total Pembayaran: Rp ${Math.ceil(order.orderTotal * 1.0175).toLocaleString()}</strong></p>
+                <p style="margin: 0;"><strong>Total Pembayaran: Rp ${Math.ceil(order.orderTotal).toLocaleString()}</strong></p>
               </td>
             </tr>
           </table>

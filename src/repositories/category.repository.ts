@@ -28,6 +28,7 @@ class CategoryRepository {
 
   async createCategory(data: {
     name: string;
+    fee: number;
     type: string;
   }): Promise<Category> {
     return prisma.category.create({ data });

@@ -9,6 +9,7 @@ const prisma = new PrismaClient();
 async function main() {
   // Delete all data with no cascade
   await prisma.faq.deleteMany();
+  await prisma.setting.deleteMany();
   await prisma.visit.deleteMany();
   
   // Delete all Cart related data
@@ -97,6 +98,7 @@ async function main() {
     const productCategory = await prisma.category.create({
       data: {
         name: `Product Category ${i+1}`,
+        fee: parseFloat((Math.random() * (1.5 - 0.5) + 0.5).toFixed(2)),
         type: 'Product',
       },
     });
@@ -205,6 +207,7 @@ async function main() {
     const eventCategory = await prisma.category.create({
       data: {
         name: `Event Category ${i+1}`,
+        fee: parseFloat((Math.random() * (1.5 - 0.5) + 0.5).toFixed(2)),
         type: 'Event',
       },
     });
@@ -376,6 +379,17 @@ async function main() {
       },
     });
   }
+
+  // Create 1 Setting
+  await prisma.setting.create({
+    data: {
+      description: 'Kami menghadirkan pengalaman terbaik untuk penyewaan vendor logistik event secara praktis. Dengan pilihan vendor yang handal dan produk yang berkualitas tinggi, kami memastikan bahwa setiap event Anda berjalan lancar dan sesuai harapan.',
+      youtubeUrl: 'https://www.youtube.com/embed/ZZl2uAkUfHA',
+      vendorCount: 30,
+      productCount: 100,
+      orderCount: 30,
+    },
+  });
 }
 
 function getRandomDateWithinPastWeek() {

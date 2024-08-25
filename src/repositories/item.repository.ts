@@ -78,6 +78,8 @@ class ItemRepository {
       throw new Error("Event not found");
     }
 
+    const category = await prisma.category.findUnique({ where: { id: event.categoryId } });
+
     const eventBundles = await prisma.bundle.findMany({ where: { eventId: event.id } });
     const productBundles = eventBundles.map((bundle) => bundle.productId);
     const bundles = await prisma.product.findMany({ where: { id: { in: productBundles } } });
@@ -105,6 +107,7 @@ class ItemRepository {
       eventImage: event.eventImage,
       eventBundles: bundles.map((bundle) => bundle.name).join(", "),
       eventRating: eventRating,
+      categoryFee: category ? category.fee : 0,
       isReviewed,
     }
   }
@@ -123,6 +126,8 @@ class ItemRepository {
     if (!product) {
       throw new Error("Product not found");
     }
+
+    const category = await prisma.category.findUnique({ where: { id: product.categoryId } });
 
     const vendor = await prisma.vendor.findUnique({ where: { id: product.vendorId } });
     if (!vendor) {
@@ -153,6 +158,7 @@ class ItemRepository {
       productRating: productRating,
       vendorId: product.vendorId,
       vendorAddress: vendor.address,
+      categoryFee: category ? category.fee : 0,
       duration: item.duration,
       quantity: item.quantity,
       isReviewed,

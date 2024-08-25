@@ -82,7 +82,9 @@ class NodemailerUtils {
       from: process.env.EMAIL_USER,
       to: email,
       subject: `Pemesanan Logevent Dibatalkan`,
-      text: `Pemesanan Logevent Anda dibatalkan karena alasan berikut: ${cancelMessage}`
+      html: `
+        <p>Pemesanan Logevent Anda dibatalkan karena alasan berikut: <b>${cancelMessage}</b></p>
+      `
     };
 
     return this.sendMail(mailOptions);

@@ -59,9 +59,10 @@ class CategoryController {
 
   async createCategory(req: Request, res: Response) {
     try {
-      const { name, type } = req.body;
+      const { name, fee, type } = req.body;
       const newCategory = await categoryRepository.createCategory({
         name,
+        fee,
         type
       });
 
@@ -79,9 +80,10 @@ class CategoryController {
         return res.status(404).json({ message: "Category not found" });
       }
 
-      const { name, type } = req.body;
+      const { name, fee, type } = req.body;
       const updatedCategory = await categoryRepository.updateCategory(id, {
         name: name || category.name,
+        fee: fee || category.fee,
         type: type || category.type
       });
       
