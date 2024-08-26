@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Delete all data with no cascade
+  await prisma.admin.deleteMany();
   await prisma.faq.deleteMany();
   await prisma.setting.deleteMany();
   await prisma.visit.deleteMany();
@@ -33,11 +34,11 @@ async function main() {
 
   // Create 1 Admin
   const hashedPassword = await hash('password', 10);
-  const admin = await prisma.user.create({
+  await prisma.user.create({
     data: {
       email: 'logevent.eo@gmail.com',
       password: hashedPassword,
-      name: 'Admin',
+      name: 'Admin LogEvent',
       phone: '6289520771715',
       isAdmin: true,
       isVerified: true,
@@ -48,237 +49,309 @@ async function main() {
   const adminVendor = await prisma.vendor.create({
     data: {
       email: 'logevent.eo@gmail.com',
-      name: 'Vendor Admin',
+      name: 'LogEvent',
       phone: '6289520771715',
       address: 'Jl. Ganesa No. 10 Coblong, Kota Bandung, Jawa Barat Indonesia 40132',
       instagram: 'logevent.eo',
-      socialMedia: 'Vendor Admin Social Media',
       documentUrl: 'https://drive.google.com/file/d/1W1gWA621MB6zq-JU3xsPni2QB8VxmaCn/view?usp=drive_link',
     },
   });
 
-  // Create 5 Users
-  const userCount = 5;
+  // Create 3 Users
+  const userCount = 3;
   const users: User[] = [];
+  const sampleUsers = [
+    {
+      email: 'ahmadghulamilham@gmail.com',
+      password: hashedPassword,
+      name: 'Ahmad Ghulam Ilham',
+      phone: '1234567891',
+      isVerified: true,
+    },
+    {
+      email: 'satrianababan@gmail.com',
+      password: hashedPassword,
+      name: 'Satria Octavianus Nababan',
+      phone: '1234567892',
+      isVerified: true,
+    },
+    {
+      email: 'jasonrivalino@gmail.com',
+      password: hashedPassword,
+      name: 'Jason Rivalino',
+      phone: '1234567893',
+      isVerified: true,
+    },
+  ];
   for (let i = 0; i < userCount; i++) {
     const user = await prisma.user.create({
-      data: {
-        email: `user${i+1}@gmail.com`,
-        password: hashedPassword,
-        name: `User ${i+1}`,
-        phone: `123456789${i+1}`,
-        isVerified: true,
-      },
+      data: sampleUsers[i],
     });
     users.push(user);
   }
 
-  // Create 5 Vendors
-  const vendorCount = 5;
+  // Create 3 Vendors
+  const vendorCount = 3;
   const vendors: Vendor[] = [];
+  const sampleVendors = [
+    {
+      email: 'freshflora@gmail.com',
+      name: 'Fresh Flora',
+      phone: '1234567894',
+      address: '123 Blossom Street, Greenfield',
+      instagram: 'freshflora',
+      socialMedia: 'Fresh Flora Official',
+      documentUrl: 'https://drive.google.com/file/d/1W1gWA621MB6zq-JU3xsPni2QB8VxmaCn/view?usp=drive_link',
+    },
+    {
+      email: 'urbanfeast@gmail.com',
+      name: 'Urban Feast',
+      phone: '1234567895',
+      address: '456 Market Avenue, Downtown City',
+      instagram: 'urban_feast',
+      socialMedia: 'Urban Feast Eatery',
+      documentUrl: 'https://drive.google.com/file/d/1W1gWA621MB6zq-JU3xsPni2QB8VxmaCn/view?usp=drive_link',
+    },
+    {
+      email: 'techvisionary@gmail.com',
+      name: 'Tech Visionary',
+      phone: '1234567896',
+      address: '789 Innovation Park, Silicon Valley',
+      instagram: 'techvisionary',
+      socialMedia: 'Tech Visionary Solutions',
+      documentUrl: 'https://drive.google.com/file/d/1W1gWA621MB6zq-JU3xsPni2QB8VxmaCn/view?usp=drive_link',
+    },
+  ];
   for (let i = 0; i < vendorCount; i++) {
     const vendor = await prisma.vendor.create({
-      data: {
-        email: `vendor${i+1}@gmail.com`,
-        name: `Vendor ${i+1}`,
-        phone: `123456789${i+1}`,
-        address: `Vendor ${i+1} Address`,
-        instagram: `vendor${i+1}`,
-        socialMedia: `Vendor ${i+1} Social Media`,
-        documentUrl: 'https://drive.google.com/file/d/1W1gWA621MB6zq-JU3xsPni2QB8VxmaCn/view?usp=drive_link',
-      },
+      data: sampleVendors[i],
     });
     vendors.push(vendor);
   }
 
-  // Create 5 Product Categories
-  const productCategoryCount = 5;
-  const productCategories: Category[] = [];
-  for (let i = 0; i < productCategoryCount; i++) {
-    const productCategory = await prisma.category.create({
-      data: {
-        name: `Product Category ${i+1}`,
-        fee: parseFloat((Math.random() * (1.5 - 0.5) + 0.5).toFixed(2)),
-        type: 'Product',
-      },
-    });
-    productCategories.push(productCategory);
-  }
+  // Create 1 Event Organizer Category
+  const eventOrganizerCategory = await prisma.category.create({
+    data: {
+      name: 'Event Organizer',
+      fee: 0,
+      type: 'Event Organizer',
+    },
+  });
 
   // Create 1 Event Organizer Product
   const eventOrganizerProduct = await prisma.product.create({
     data: {
       vendorId: adminVendor.id,
-      categoryId: productCategories[Math.floor(Math.random() * productCategoryCount)].id,
-      name: 'Event Organizer Product',
-      specification: 'Event Organizer Product Specification',
+      categoryId: eventOrganizerCategory.id,
+      name: 'Event Organizer',
+      specification: 'Event Organizer',
       rate: 'Daily',
       price: 0,
-      description: 'Event Organizer Product Description',
-      productImage: '/Image/planetarium.jpg'
+      description: 'LogEvent juga menawarkan jasa Event Organizer profesional yang siap merancang dan mengelola event impian Anda. Tim kami yang berpengalaman akan bekerja sama dengan Anda dari tahap perencanaan hingga eksekusi, memastikan setiap detail acara Anda tertata dengan sempurna.',
+      productImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/kop8wdcpriag8h2vtwel.png'
     },
   });
 
-  // Create 1 Event Organizer Cart
-  const eventOrganizerCart = await prisma.cart.create({
-    data: {
-      userId: admin.id,
-      type: 'Product',
-      cartStatus: 'Checked Out'
-    },
-  });
+  // Create 3 Event Organizer Cart
+  const eventOrganizerCartCount = 3;
+  const eventOrganizerCarts: Cart[] = [];
+  for (let i = 0; i < eventOrganizerCartCount; i++) {
+    const eventOrganizerCart = await prisma.cart.create({
+      data: {
+        userId: users[i].id,
+        type: 'Event Organizer',
+        cartStatus: 'Checked Out'
+      },
+    });
+    eventOrganizerCarts.push(eventOrganizerCart);
+  }
 
-  // Create 1 Event Organizer Item
-  const eventOrganizerItem = await prisma.item.create({
-    data: {
-      cartId: eventOrganizerCart.id,
-      productId: eventOrganizerProduct.id,
-    },
-  });
+  // Create 3 Event Organizer Item
+  const eventOrganizerItemCount = 3;
+  const eventOrganizerItems: Item[] = [];
+  for (let i = 0; i < eventOrganizerItemCount; i++) {
+    const eventOrganizerItem = await prisma.item.create({
+      data: {
+        cartId: eventOrganizerCarts[i].id,
+        productId: eventOrganizerProduct.id,
+      },
+    });
+    eventOrganizerItems.push(eventOrganizerItem);
+  }
 
-  // Create 1 Event Organizer Order
-  await prisma.order.create({
-    data: {
-      cartId: eventOrganizerCart.id,
-      name: 'Event Organizer Order',
-      phone: '1234567890',
-      address: 'Event Organizer Order Address',
-      notes: 'Event Organizer Order Notes',
-      startDate: getRandomDateWithinPastTwoMonth(),
-      endDate: getRandomDateWithinPastTwoMonth(),
-      orderDate: getRandomDateWithinPastTwoMonth(),
-      orderStatus: 'Completed'
+  // Create 3 Event Organizer Order
+  const eventOrganizerOrderCount = 3;
+  const startDate1 = getRandomDateWithinPastTwoMonth();
+  const endDate1 = new Date(startDate1.getTime() + 24 * 60 * 60 * 1000);
+  const orderDate1 = new Date(startDate1.getTime() - 24 * 60 * 60 * 1000);
+  const startDate2 = getRandomDateWithinPastTwoMonth();
+  const endDate2 = new Date(startDate2.getTime() + 2 * 24 * 60 * 60 * 1000);
+  const orderDate2 = new Date(startDate2.getTime() - 2 * 24 * 60 * 60 * 1000);
+  const startDate3 = getRandomDateWithinPastTwoMonth();
+  const endDate3 = new Date(startDate3.getTime() + 3 * 24 * 60 * 60 * 1000);
+  const orderDate3 = new Date(startDate3.getTime() - 3 * 24 * 60 * 60 * 1000);
+  const eventOrganizerOrderSample = [
+    {
+      cartId: eventOrganizerCarts[0].id,
+      name: 'Ahmad Ghulam Ilham',
+      phone: '1234567897',
+      address: 'Jl. Sudirman No. 1, Jakarta',
+      notes: 'Mohon datang 30 menit sebelum acara dimulai',
+      startDate: startDate1,
+      endDate: endDate1,
+      orderDate: orderDate1,
+      orderStatus: 'Completed',
     },
-  });
-
-  // Create 1 Event Organizer Review
-  await prisma.review.create({
-    data: {
-      itemId: eventOrganizerItem.id,
-      rating: 5,
-      comment: 'Event Organizer Review Comment',
-      tag: 'Event Organizer Review Tag',
+    {
+      cartId: eventOrganizerCarts[1].id,
+      name: 'Satria Octavianus Nababan',
+      phone: '1234567898',
+      address: 'Jl. Malioboro No. 22, Yogyakarta',
+      notes: 'Acara diadakan di ruang konferensi utama',
+      startDate: startDate2,
+      endDate: endDate2,
+      orderDate: orderDate2,
+      orderStatus: 'Completed',
     },
-  });
-
-  // Create 10 Products
-  const rates = ["Quantity", "Hourly", "Daily"];
-  const images = [
-    "/Image/landingpage1.jpg",
-    "/Image/landingpage2.jpg",
-    "/Image/landingpage3.jpg",
-    "/Image/planetarium.jpg",
-    "/Image/partyevent.jpg"
+    {
+      cartId: eventOrganizerCarts[2].id,
+      name: 'Jason Rivalino',
+      phone: '1234567899',
+      address: 'Jl. Diponegoro No. 33, Bandung',
+      notes: 'Pesanan untuk acara peluncuran produk',
+      startDate: startDate3,
+      endDate: endDate3,
+      orderDate: orderDate3,
+      orderStatus: 'Completed',
+    },
   ];
-  const productCount = 10;
+  for (let i = 0; i < eventOrganizerOrderCount; i++) {
+    await prisma.order.create({
+      data: eventOrganizerOrderSample[i],
+    });
+  }
+
+  // Create 3 Event Organizer Review
+  const eventOrganizerReviewCount = 3;
+  const eventOrganizerReviewSample = [
+    {
+      itemId: eventOrganizerItems[0].id,
+      rating: 5,
+      comment: 'Pelayanan sangat memuaskan, acara berjalan lancar!',
+      tag: 'Pelayanan Memuaskan',
+    },
+    {
+      itemId: eventOrganizerItems[1].id,
+      rating: 5,
+      comment: 'Terima kasih, acara sangat terorganisir dan sukses.',
+      tag: 'Acara Sukses',
+    },
+    {
+      itemId: eventOrganizerItems[2].id,
+      rating: 5,
+      comment: 'Tim yang sangat profesional dan mudah diajak kerja sama.',
+      tag: 'Tim Profesional',
+    },
+  ];
+  for (let i = 0; i < eventOrganizerReviewCount; i++) {
+    await prisma.review.create({
+      data: eventOrganizerReviewSample[i],
+    });
+  }
+
+  // Create 3 Product Categories
+  const productCategoryCount = 3;
+  const productCategorySample = [
+    {
+      name: 'Gedung',
+      fee: 1.5,
+      type: 'Product',
+    },
+    {
+      name: 'Catering',
+      fee: 1.0,
+      type: 'Product',
+    },
+    {
+      name: 'Sound System',
+      fee: 0.5,
+      type: 'Product',
+    },
+  ];
+  const productCategories: Category[] = [];
+  for (let i = 0; i < productCategoryCount; i++) {
+    const productCategory = await prisma.category.create({
+      data: productCategorySample[i],
+    });
+    productCategories.push(productCategory);
+  }
+
+  // Create 3 Products
+  const productCount = 3;
+  const productSample = [
+    {
+      vendorId: vendors[0].id,
+      categoryId: productCategories[0].id,
+      name: 'Balai Sartika',
+      specification: 'Multifunction Hall',
+      rate: 'Daily',
+      price: 2500000,
+      capacity: 500,
+      description: 'Balai Sartika adalah gedung serbaguna yang cocok untuk berbagai macam acara seperti seminar, konser, dan pameran.',
+      productImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/Sound_System_fueh16.png',
+    },
+    {
+      vendorId: vendors[1].id,
+      categoryId: productCategories[1].id,
+      name: 'Catering Bu Daffa',
+      specification: 'Food & Beverage',
+      rate: 'Quantity',
+      price: 30000,
+      description: 'Catering Bu Daffa menyediakan berbagai macam menu makanan dan minuman untuk acara Anda.',
+      productImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/Catering_z6wsa0.png',
+    },
+    {
+      vendorId: vendors[2].id,
+      categoryId: productCategories[2].id,
+      name: 'Home Theater Harman Kardon',
+      specification: 'Sound System',
+      rate: 'Hourly',
+      price: 150000,
+      description: 'Sound System adalah perangkat audio profesional yang cocok untuk acara besar seperti konser dan festival.',
+      productImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/Balai_dcrq40.png',
+    },
+  ];
   const products: Product[] = [];
   for (let i = 0; i < productCount; i++) {
     const product = await prisma.product.create({
-      data: {
-        vendorId: vendors[Math.floor(Math.random() * vendorCount)].id,
-        categoryId: productCategories[Math.floor(Math.random() * productCategoryCount)].id,
-        name: `Product ${i+1}`,
-        specification: `Specification ${i+1}`,
-        rate: rates[Math.floor(Math.random() * rates.length)],
-        price: Math.floor(Math.random() * 1000000),
-        capacity: Math.floor(Math.random() * 1000),
-        description: `Description ${i+1}`,
-        productImage: images[Math.floor(Math.random() * images.length)],
-      },
+      data: productSample[i],
     });
     products.push(product);
   }
 
-  // Create 10 Product Albums
-  const albumCount = 10;
-  for (let i = 0; i < albumCount; i++) {
-    await prisma.album.create({
-      data: {
-        productId: products[Math.floor(Math.random() * productCount)].id,
-        albumImage: images[Math.floor(Math.random() * images.length)],
-      },
-    });
-  }
-
-  // Create 5 Event Categories
-  const eventCategoryCount = 5;
-  const eventCategories: Category[] = [];
-  for (let i = 0; i < eventCategoryCount; i++) {
-    const eventCategory = await prisma.category.create({
-      data: {
-        name: `Event Category ${i+1}`,
-        fee: parseFloat((Math.random() * (1.5 - 0.5) + 0.5).toFixed(2)),
-        type: 'Event',
-      },
-    });
-    eventCategories.push(eventCategory);
-  }
-
-  // Create 10 Events
-  const eventCount = 10;
-  const events: Event[] = [];
-  for (let i = 0; i < eventCount; i++) {
-    const event = await prisma.event.create({
-      data: {
-        categoryId: eventCategories[Math.floor(Math.random() * eventCategoryCount)].id,
-        name: `Event ${i+1}`,
-        price: Math.floor(Math.random() * 10000000),
-        capacity: Math.floor(Math.random() * 1000),
-        description: `Description ${i+1}`,
-        eventImage: images[Math.floor(Math.random() * images.length)],
-      },
-    });
-    events.push(event);
-  }
-
-  // Create 10 Event Albums
-  for (let i = 0; i < albumCount; i++) {
-    await prisma.album.create({
-      data: {
-        eventId: events[Math.floor(Math.random() * eventCount)].id,
-        albumImage: images[Math.floor(Math.random() * images.length)],
-      },
-    });
-  }
-
-  // Create 10 Bundles
-  const bundleCount = 10;
-  for (let i = 0; i < bundleCount; i++) {
-    await prisma.bundle.create({
-      data: {
-        eventId: events[Math.floor(Math.random() * eventCount)].id,
-        productId: products[Math.floor(Math.random() * productCount)].id,
-      },
-    });
-  }
-
-  // Create 10 Carts
-  const types = ["Product", "Event"];
-  const cartCount = 10;
-  const carts: Cart[] = [];
-  for (let i = 0; i < cartCount; i++) {
+  // Create 3 Product Carts
+  const productCartCount = 3;
+  const productCarts: Cart[] = [];
+  for (let i = 0; i < productCartCount; i++) {
     const cart = await prisma.cart.create({
       data: {
-        userId: users[Math.floor(Math.random() * userCount)].id,
-        type: types[Math.floor(Math.random() * types.length)],
+        userId: users[i].id,
+        type: 'Product',
         cartStatus: 'Checked Out'
       },
     });
-    carts.push(cart);
+    productCarts.push(cart);
   }
 
-  // Create 10 Product Items
-  const productItemCount = 10;
+  // Create 3 Product Items
+  const productItemCount = 3;
   const productItems: Item[] = [];
   for (let i = 0; i < productItemCount; i++) {
-    let cart = carts[Math.floor(Math.random() * cartCount)];
-    while (cart.type !== "Product") {
-      cart = carts[Math.floor(Math.random() * cartCount)];
-    }
-
+    const cart = productCarts[i];
     let duration: number | null = null;
     let quantity: number | null = null;
-    const product = products[Math.floor(Math.random() * productCount)];
+
+    const product = products[i];
     if (product.rate === "Quantity") {
       quantity = Math.floor(Math.random() * 100);
     } else if (product.rate === "Hourly") {
@@ -288,7 +361,7 @@ async function main() {
     const productItem = await prisma.item.create({
       data: {
         cartId: cart.id,
-        productId: products[Math.floor(Math.random() * productCount)].id,
+        productId: products[i].id,
         duration: duration,
         quantity: quantity
       },
@@ -296,85 +369,304 @@ async function main() {
     productItems.push(productItem);
   }
 
-  // Create 10 Event Items
-  const eventItemCount = 10;
+  // Create 3 Product Orders
+  const productOrderCount = 3;
+  const startDate4 = getRandomDateWithinPastTwoMonth();
+  const endDate4 = new Date(startDate1.getTime() + 24 * 60 * 60 * 1000);
+  const orderDate4 = new Date(startDate1.getTime() - 24 * 60 * 60 * 1000);
+  const startDate5 = getRandomDateWithinPastTwoMonth();
+  const endDate5 = new Date(startDate2.getTime() + 2 * 24 * 60 * 60 * 1000);
+  const orderDate5 = new Date(startDate2.getTime() - 2 * 24 * 60 * 60 * 1000);
+  const startDate6 = getRandomDateWithinPastTwoMonth();
+  const endDate6 = new Date(startDate3.getTime() + 3 * 24 * 60 * 60 * 1000);
+  const orderDate6 = new Date(startDate3.getTime() - 3 * 24 * 60 * 60 * 1000);
+  const productOrderSample = [
+    {
+      cartId: productCarts[0].id,
+      name: 'Ahmad Ghulam Ilham',
+      phone: '1234567894',
+      address: 'Jl. Sudirman No. 1, Jakarta',
+      notes: 'Mohon Balai Sartika disiapkan untuk acara seminar',
+      startDate: startDate4,
+      endDate: endDate4,
+      orderDate: orderDate4,
+      orderStatus: 'Completed',
+    },
+    {
+      cartId: productCarts[1].id,
+      name: 'Satria Octavianus Nababan',
+      phone: '1234567895',
+      address: 'Jl. Malioboro No. 22, Yogyakarta',
+      notes: 'Mohon Catering datang 1 jam sebelum acara dimulai',
+      startDate: startDate5,
+      endDate: endDate5,
+      orderDate: orderDate5,
+      orderStatus: 'Completed',
+    },
+    {
+      cartId: productCarts[2].id,
+      name: 'Jason Rivalino',
+      phone: '1234567896',
+      address: 'Jl. Diponegoro No. 33, Bandung',
+      notes: 'Mohon Home Theater Harman Kardon disiapkan untuk acara konser',
+      startDate: startDate6,
+      endDate: endDate6,
+      orderDate: orderDate6,
+      orderStatus: 'Completed',
+    },
+  ];
+  for (let i = 0; i < productOrderCount; i++) {
+    await prisma.order.create({
+      data: productOrderSample[i],
+    });
+  }
+
+  // Create 3 Product Reviews
+  const productReviewCount = 3;
+  const productReviewSample = [
+    {
+      itemId: productItems[0].id,
+      rating: 5,
+      comment: 'Balai Sartika sangat nyaman dan cocok untuk acara seminar.',
+      tag: 'Kenyamanan Gedung',
+    },
+    {
+      itemId: productItems[1].id,
+      rating: 5,
+      comment: 'Catering Bu Daffa sangat enak dan pelayanan sangat baik.',
+      tag: 'Kualitas Makanan',
+    },
+    {
+      itemId: productItems[2].id,
+      rating: 5,
+      comment: 'Home Theater Harman Kardon memiliki kualitas suara yang sangat baik.',
+      tag: 'Kualitas Suara',
+    },
+  ];
+  for (let i = 0; i < productReviewCount; i++) {
+    await prisma.review.create({
+      data: productReviewSample[i],
+    });
+  }
+
+  // Create 3 Event Categories
+  const eventCategoryCount = 3;
+  const eventCategorySample = [
+    {
+      name: 'Konser',
+      fee: 1.5,
+      type: 'Event',
+    },
+    {
+      name: 'Pesta',
+      fee: 1.0,
+      type: 'Event',
+    },
+    {
+      name: 'Seminar',
+      fee: 0.5,
+      type: 'Event',
+    },
+  ];
+  const eventCategories: Category[] = [];
+  for (let i = 0; i < eventCategoryCount; i++) {
+    const eventCategory = await prisma.category.create({
+      data: eventCategorySample[i],
+    });
+    eventCategories.push(eventCategory);
+  }
+
+  // Create 3 Events
+  const eventCount = 3;
+  const eventSample = [
+    {
+      categoryId: eventCategories[0].id,
+      name: 'Konser Musik Indie',
+      price: 3000000,
+      capacity: 1000,
+      description: 'Konser Musik Indie adalah acara musik yang menampilkan band-band indie terkenal di Indonesia.',
+      eventImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/Show_grvzif.png',
+    },
+    {
+      categoryId: eventCategories[1].id,
+      name: 'Ulang Tahun Minimalis',
+      price: 1500000,
+      capacity: 300,
+      description: 'Ulang Tahun Minimalis adalah pesta ulang tahun yang sederhana namun berkesan.',
+      eventImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/Birthday_gfapbf.png',
+    },
+    {
+      categoryId: eventCategories[2].id,
+      name: 'Seminar Kewirausahaan',
+      price: 4000000,
+      capacity: 200,
+      description: 'Seminar Kewirausahaan adalah seminar yang membahas tentang kewirausahaan dan peluang bisnis di Indonesia.',
+      eventImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/Meeting_q87sj8.png',
+    },
+  ];
+  const events: Event[] = [];
+  for (let i = 0; i < eventCount; i++) {
+    const event = await prisma.event.create({
+      data: eventSample[i],
+    });
+    events.push(event);
+  }
+
+  // Create 3 Event Bundles
+  const eventBundleCount = 3;
+  const eventBundleSample = [
+    {
+      eventId: events[0].id,
+      productId: products[0].id,
+    },
+    {
+      eventId: events[1].id,
+      productId: products[1].id,
+    },
+    {
+      eventId: events[2].id,
+      productId: products[2].id,
+    },
+  ];
+  for (let i = 0; i < eventBundleCount; i++) {
+    await prisma.bundle.create({
+      data: eventBundleSample[i],
+    });
+  }
+
+  // Create 3 Event Carts
+  const eventCartCount = 3;
+  const eventCarts: Cart[] = [];
+  for (let i = 0; i < eventCartCount; i++) {
+    const cart = await prisma.cart.create({
+      data: {
+        userId: users[i].id,
+        type: 'Event',
+        cartStatus: 'Checked Out'
+      },
+    });
+    eventCarts.push(cart);
+  }
+
+  // Create 3 Event Items
+  const eventItemCount = 3;
   const eventItems: Item[] = [];
   for (let i = 0; i < eventItemCount; i++) {
-    let cart = carts[Math.floor(Math.random() * cartCount)];
-    while (cart.type !== "Event") {
-      cart = carts[Math.floor(Math.random() * cartCount)];
-    }
+    let cart = eventCarts[i]
 
     const eventItem = await prisma.item.create({
       data: {
         cartId: cart.id,
-        eventId: events[Math.floor(Math.random() * eventCount)].id,
+        eventId: events[i].id,
       },
     });
     eventItems.push(eventItem);
   }
 
-  // Create 10 Orders
-  const orderCount = 10;
-  for (let i = 0; i < orderCount; i++) {
+  // Create 3 Event Orders
+  const eventOrderCount = 3;
+  const startDate7 = getRandomDateWithinPastTwoMonth();
+  const endDate7 = new Date(startDate1.getTime() + 24 * 60 * 60 * 1000);
+  const orderDate7 = new Date(startDate1.getTime() - 24 * 60 * 60 * 1000);
+  const startDate8 = getRandomDateWithinPastTwoMonth();
+  const endDate8 = new Date(startDate2.getTime() + 2 * 24 * 60 * 60 * 1000);
+  const orderDate8 = new Date(startDate2.getTime() - 2 * 24 * 60 * 60 * 1000);
+  const startDate9 = getRandomDateWithinPastTwoMonth();
+  const endDate9 = new Date(startDate3.getTime() + 3 * 24 * 60 * 60 * 1000);
+  const orderDate9 = new Date(startDate3.getTime() - 3 * 24 * 60 * 60 * 1000);
+  const eventOrderSample = [
+    {
+      cartId: eventCarts[0].id,
+      name: 'Ahmad Ghulam Ilham',
+      phone: '1234567897',
+      address: 'Jl. Sudirman No. 1, Jakarta',
+      notes: 'Mohon Konser Musik Indie dimulai tepat waktu',
+      startDate: startDate7,
+      endDate: endDate7,
+      orderDate: orderDate7,
+      orderStatus: 'Completed',
+    },
+    {
+      cartId: eventCarts[1].id,
+      name: 'Satria Octavianus Nababan',
+      phone: '1234567898',
+      address: 'Jl. Malioboro No. 22, Yogyakarta',
+      notes: 'Mohon Ulang Tahun Minimalis disiapkan dekorasi minimalis',
+      startDate: startDate8,
+      endDate: endDate8,
+      orderDate: orderDate8,
+      orderStatus: 'Completed',
+    },
+    {
+      cartId: eventCarts[2].id,
+      name: 'Jason Rivalino',
+      phone: '1234567899',
+      address: 'Jl. Diponegoro No. 33, Bandung',
+      notes: 'Pesanan untuk Seminar Kewirausahaan',
+      startDate: startDate9,
+      endDate: endDate9,
+      orderDate: orderDate9,
+      orderStatus: 'Completed',
+    },
+  ];
+  for (let i = 0; i < eventOrderCount; i++) {
     await prisma.order.create({
-      data: {
-        cartId: carts[i].id,
-        name: `Order ${i+1}`,
-        phone: `123456789${i+1}`,
-        address: `Order ${i+1} Address`,
-        notes: `Order ${i+1} Notes`,
-        startDate: getRandomDateWithinPastTwoMonth(),
-        endDate: getRandomDateWithinPastTwoMonth(),
-        orderDate: getRandomDateWithinPastTwoMonth(),
-        orderStatus: 'Completed'
-      },
+      data: eventOrderSample[i],
     });
   }
 
-  // Create 10 Product Reviews
-  const productReviewCount = 10;
-  for (let i = 0; i < productReviewCount; i++) {
-    await prisma.review.create({
-      data: {
-        itemId: productItems[Math.floor(Math.random() * productItemCount)].id,
-        rating: Math.floor(Math.random() * 5) + 1,
-        comment: `Product Review Comment ${i+1}`,
-        tag: `Product Review Tag ${i+1}`,
-      },
-    });
-  }
-
-  // Create 10 Event Reviews
-  const eventReviewCount = 10;
+  // Create 3 Event Reviews
+  const eventReviewCount = 3;
+  const eventReviewSample = [
+    {
+      itemId: eventItems[0].id,
+      rating: 5,
+      comment: 'Konser Musik Indie sangat seru dan penuh kejutan!',
+      tag: 'Acara Seru',
+    },
+    {
+      itemId: eventItems[1].id,
+      rating: 5,
+      comment: 'Ulang Tahun Minimalis sangat sederhana dan berkesan.',
+      tag: 'Pesta Sederhana',
+    },
+    {
+      itemId: eventItems[2].id,
+      rating: 5,
+      comment: 'Seminar Kewirausahaan sangat informatif dan bermanfaat.',
+      tag: 'Seminar Bermanfaat',
+    },
+  ];
   for (let i = 0; i < eventReviewCount; i++) {
     await prisma.review.create({
-      data: {
-        itemId: eventItems[Math.floor(Math.random() * eventItemCount)].id,
-        rating: Math.floor(Math.random() * 5) + 1,
-        comment: `Event Review Comment ${i+1}`,
-        tag: `Event Review Tag ${i+1}`,
-      },
+      data: eventReviewSample[i],
     });
   }
 
-  // Create 5 Faqs
-  const faqCount = 5;
+  // Create 2 Faqs
+  const faqCount = 2;
+  const sampleFaqs = [
+    {
+      question: 'Apa itu LogEvent?',
+      answer: 'LogEvent adalah penyedia jasa EventOrganizer, pemesanan logistik vendor dan Paket Logistik Event yang terintegrasi dalam sebuah  website.',
+    },
+    {
+      question: 'Bagaimana cara menjadi mitra vendor LogEvent?',
+      answer: 'Lakukan pendaftaran dengan melakukan klik pada  tombol Menjadi Vendor, lalu Anda akan diarahkan ke Admin kami untuk kesepakatan kerjasama.',
+    },
+  ];
   for (let i = 0; i < faqCount; i++) {
     await prisma.faq.create({
-      data: {
-        question: `Question ${i+1}`,
-        answer: `Answer ${i+1}`,
-      },
+      data: sampleFaqs[i],
     });
   }
 
-  // Create 10 Visits
-  const visitCount = 10;
+  // Create 3 Visits
+  const visitCount = 3;
   for (let i = 0; i < visitCount; i++) {
     await prisma.visit.create({
       data: {
-        ipAddress: `192.168.1.${Math.floor(Math.random() * 256)}`,
+        ipAddress: `192.168.1.${i+1}`,
         visitDate: getRandomDateWithinPastWeek(),
       },
     });
@@ -385,21 +677,40 @@ async function main() {
     data: {
       description: 'Kami menghadirkan pengalaman terbaik untuk penyewaan vendor logistik event secara praktis. Dengan pilihan vendor yang handal dan produk yang berkualitas tinggi, kami memastikan bahwa setiap event Anda berjalan lancar dan sesuai harapan.',
       youtubeUrl: 'https://www.youtube.com/embed/ZZl2uAkUfHA',
-      vendorCount: 30,
-      productCount: 100,
-      orderCount: 30,
+      vendorCount: 3,
+      productCount: 3,
+      orderCount: 9,
     },
   });
+
+  // Create 3 Admin Email
+  const adminEmailCount = 3;
+  const adminEmailSample = [
+    {
+      email: 'ahmadghulamilham@gmail.com',
+    },
+    {
+      email: 'Satriaoctavianus28@gmail.com',
+    },
+    {
+      email: '13521168@std.stei.itb.ac.id',
+    },
+  ];
+  for (let i = 0; i < adminEmailCount; i++) {
+    await prisma.admin.create({
+      data: adminEmailSample[i],
+    });
+  }
 }
 
-function getRandomDateWithinPastWeek() {
+function getRandomDateWithinPastWeek(): Date {
   const currentDate = new Date();
   const pastWeek = new Date(currentDate.getTime() - (7 * 24 * 60 * 60 * 1000));
   const randomTime = pastWeek.getTime() + Math.random() * (currentDate.getTime() - pastWeek.getTime());
   return new Date(randomTime);
 }
 
-function getRandomDateWithinPastTwoMonth() {
+function getRandomDateWithinPastTwoMonth(): Date {
   const currentDate = new Date();
   const pastTwoMonth = new Date(currentDate.getTime() - (60 * 24 * 60 * 60 * 1000));
   const randomTime = pastTwoMonth.getTime() + Math.random() * (currentDate.getTime() - pastTwoMonth.getTime());
