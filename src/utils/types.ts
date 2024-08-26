@@ -32,6 +32,7 @@ interface ItemEventDetail {
   eventImage: string | null;
   eventBundles: string | null;
   eventRating: number;
+  categoryFee: number;
   isReviewed: boolean;
 };
 
@@ -46,6 +47,7 @@ interface ItemProductDetail {
   productRating: number;
   vendorId: number;
   vendorAddress: string;
+  categoryFee: number;
   duration: number | null;
   quantity: number | null;
   isReviewed: boolean;
@@ -137,6 +139,7 @@ interface WishlistProductDetail {
   productId: number;
   productName: string;
   productSpecification: string;
+  productRate: string;
   productPrice: number;
   productImage: string | null;
   productRating: number;

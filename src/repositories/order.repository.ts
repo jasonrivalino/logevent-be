@@ -146,26 +146,28 @@ class OrderRepository {
     }
 
     let orderTotal = 0;
-    const orderRange = Math.floor((order.endDate.getTime() - order.startDate.getTime()) / (1000 * 3600 * 24));
+    const orderRange = 1 + Math.floor((order.endDate.getTime() - order.startDate.getTime()) / (1000 * 3600 * 24));
     const items = await prisma.item.findMany({ where: { cartId: cart.id } });
     for (const item of items) {
       if (item.eventId) {
-        const event = await prisma.event.findUnique({ where: { id: item.eventId } });
-        if (item.duration) {
-          orderTotal += event ? event.price * item.duration : 0;
-        } else if (item.quantity) {
-          orderTotal += event ? event.price * item.quantity : 0;
-        } else {
-          orderTotal += event ? event.price * orderRange : 0;
-        }
+        const event = await prisma.event.findUnique({
+          where: { id: item.eventId },
+          include: { category: true },
+        });
+        const feeMultiplier = event ? 1 + (event.category.fee / 100) : 1;
+        orderTotal += event ? event.price * orderRange * feeMultiplier : 0;
       } else if (item.productId) {
-        const product = await prisma.product.findUnique({ where: { id: item.productId } });
+        const product = await prisma.product.findUnique({
+          where: { id: item.productId },
+          include: { category: true },
+        });
+        const feeMultiplier = product ? 1 + (product.category.fee / 100) : 1;
         if (item.duration) {
-          orderTotal += product ? product.price * item.duration : 0;
+          orderTotal += product ? product.price * item.duration * feeMultiplier : 0;
         } else if (item.quantity) {
-          orderTotal += product ? product.price * item.quantity : 0;
+          orderTotal += product ? product.price * item.quantity * feeMultiplier : 0;
         } else {
-          orderTotal += product ? product.price * orderRange : 0;
+          orderTotal += product ? product.price * orderRange * feeMultiplier : 0;
         }
       }
     }

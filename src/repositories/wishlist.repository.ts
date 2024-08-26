@@ -119,6 +119,7 @@ class WishlistRepository {
       productId: product.id,
       productName: product.name,
       productSpecification: product.specification,
+      productRate: product.rate,
       productPrice: product.price,
       productImage: product.productImage,
       productRating: productRating,

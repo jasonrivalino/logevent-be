@@ -2,6 +2,9 @@
 
 // dependency modules
 import nodemailer from 'nodemailer';
+// self-defined modules
+import invoiceUtils from './invoice';
+import { ItemEventDetail, ItemProductDetail, OrderDetail} from './types';
 
 class NodemailerUtils {
   private transporter = nodemailer.createTransport({
@@ -38,12 +41,50 @@ class NodemailerUtils {
     return this.sendMail(mailOptions);
   }
 
-  async sendNewOrderEmail(email: string, orderId: number, token: string) {
+  // TODO: Fix Send New Order Email
+  async sendNewOrderEmail(email: string, order: OrderDetail, items: (ItemEventDetail | ItemProductDetail)[]) {
+    const invoiceHtml = await invoiceUtils.generateInvoiceBillHtml(order, items);
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Order confirmation',
-      text: `Your order with id ${orderId} is recorded. Click on the link to view your order: ${process.env.REACT_APP_URL}/order/${orderId}?token=${token}`,
+      subject: `Invoice Tagihan Pemesanan Logevent`,
+      html: invoiceHtml
+    };
+
+    return this.sendMail(mailOptions);
+  }
+
+  // TODO: Fix Send Paid Order Email
+  async sendPaidOrderEmail(email: string, order: OrderDetail, items: (ItemEventDetail | ItemProductDetail)[]) {
+    const invoiceHtml = await invoiceUtils.generateInvoicePaidHtml(order, items);
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: `Invoice Pelunasan Pemesanan Logevent`,
+      html: invoiceHtml
+    };
+
+    const adminMailOptions = {
+      from: process.env.EMAIL_USER,
+      to: process.env.ADMIN_EMAIL,
+      subject: `Invoice Pelunasan Pemesanan Logevent`,
+      html: invoiceHtml
+    };
+
+    return this.sendMail(mailOptions);
+  }
+
+  // TODO: Fix Send Cancel Order Email
+  async sendCancelOrderEmail(email: string, order: OrderDetail, cancelMessage: string) {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: `Pemesanan Logevent Dibatalkan`,
+      html: `
+        <p>Pemesanan Logevent Anda dibatalkan karena alasan berikut: <b>${cancelMessage}</b></p>
+      `
     };
 
     return this.sendMail(mailOptions);

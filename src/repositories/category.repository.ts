@@ -11,15 +11,17 @@ class CategoryRepository {
   }
 
   async findProductCategories(): Promise<Category[]> {
-    return prisma.category.findMany({ where: { type: "Product" } });
+    return prisma.category.findMany({
+      where: {
+        type: {
+          in: ["Product", "Event Organizer"],
+        },
+      },
+    });
   }
 
   async findEventCategories(): Promise<Category[]> {
     return prisma.category.findMany({ where: { type: "Event" } });
-  }
-
-  async findEventOrganizerCategories(): Promise<Category[]> {
-    return prisma.category.findMany({ where: { type: "Event Organizer" } });
   }
 
   async findCategoryById(id: number): Promise<Category | null> {
@@ -28,6 +30,7 @@ class CategoryRepository {
 
   async createCategory(data: {
     name: string;
+    fee: number;
     type: string;
   }): Promise<Category> {
     return prisma.category.create({ data });
