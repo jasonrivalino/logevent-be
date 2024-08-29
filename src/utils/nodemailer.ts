@@ -4,6 +4,7 @@
 import nodemailer from 'nodemailer';
 // self-defined modules
 import invoiceUtils from './invoice';
+import prisma from './prisma';
 import { ItemEventDetail, ItemProductDetail, OrderDetail} from './types';
 
 class NodemailerUtils {
@@ -52,6 +53,19 @@ class NodemailerUtils {
       html: invoiceHtml
     };
 
+    const adminEmails = await prisma.admin.findMany({ select: { email: true } });
+    adminEmails.forEach((admin) => {
+      this.sendMail({
+        from: process.env.EMAIL_USER,
+        to: admin.email,
+        subject: `Notifikasi Pemesanan Baru Logevent`,
+        html: `
+          Hai Admin LOGEVENT, terdapat pemesanan baru dengan nomor pemesanan <strong>${order.id}</strong> 
+          atas nama <strong>${order.name}</strong> dengan nomor WA <strong>${order.phone}</strong>.
+        `
+      });
+    });
+
     return this.sendMail(mailOptions);
   }
 
@@ -62,13 +76,6 @@ class NodemailerUtils {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: `Invoice Pelunasan Pemesanan Logevent`,
-      html: invoiceHtml
-    };
-
-    const adminMailOptions = {
-      from: process.env.EMAIL_USER,
-      to: process.env.ADMIN_EMAIL,
       subject: `Invoice Pelunasan Pemesanan Logevent`,
       html: invoiceHtml
     };

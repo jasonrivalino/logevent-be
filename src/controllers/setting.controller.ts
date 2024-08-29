@@ -6,9 +6,9 @@ import { Request, Response, Router } from "express";
 import settingRepository from "../repositories/setting.repository";
 
 class SettingController {
-  async findLatestSetting(req: Request, res: Response) {
+  async findSetting(req: Request, res: Response) {
     try {
-      const setting = await settingRepository.findLatestSetting();
+      const setting = await settingRepository.findSetting();
       if (!setting) {
         return res.status(404).json({ message: "Setting not found" });
       }
@@ -19,32 +19,20 @@ class SettingController {
     }
   }
 
-  async createSetting(req: Request, res: Response) {
-    try {
-      const { description, youtubeUrl, vendorCount, productCount, orderCount } = req.body;
-      const newSetting = await settingRepository.createSetting({
-        description,
-        youtubeUrl,
-        vendorCount,
-        productCount,
-        orderCount
-      });
-      res.status(201).json(newSetting);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  }
-
   async updateSetting(req: Request, res: Response) {
     try {
-      const id = Number(req.params.id);
-      const setting = await settingRepository.findLatestSetting();
+      const setting = await settingRepository.findSetting();
       if (!setting) {
         return res.status(404).json({ message: "Setting not found" });
       }
 
-      const { description, youtubeUrl, vendorCount, productCount, orderCount } = req.body;
-      const updatedSetting = await settingRepository.updateSetting(id, {
+      let { description, youtubeUrl, vendorCount, productCount, orderCount } = req.body;
+      if (youtubeUrl && youtubeUrl.includes('/watch?v=')) {
+        const videoId = youtubeUrl.split('/watch?v=')[1];
+        youtubeUrl = `https://www.youtube.com/embed/${videoId}`;
+      }
+
+      const updatedSetting = await settingRepository.updateSetting(setting.id, {
         description: description || setting.description,
         youtubeUrl: youtubeUrl || setting.youtubeUrl,
         vendorCount: vendorCount || setting.vendorCount,
@@ -58,27 +46,10 @@ class SettingController {
     }
   }
 
-  async deleteSetting(req: Request, res: Response) {
-    try {
-      const id = Number(req.params.id);
-      const setting = await settingRepository.findLatestSetting();
-      if (!setting) {
-        return res.status(404).json({ message: "Setting not found" });
-      }
-
-      await settingRepository.deleteSetting(id);
-      res.status(204).end();
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  }
-
   getRoutes() {
     return Router()
-      .get("/read", this.findLatestSetting)
-      .post("/create", this.createSetting)
-      .put("/update/:id", this.updateSetting)
-      .delete("/delete/:id", this.deleteSetting);
+      .get("/read", this.findSetting)
+      .put("/update", this.updateSetting)
   }
 }
 
