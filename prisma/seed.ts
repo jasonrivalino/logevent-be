@@ -332,7 +332,7 @@ async function main() {
       price: 2500000,
       capacity: 500,
       description: 'Balai Sartika adalah gedung serbaguna yang cocok untuk berbagai macam acara seperti seminar, konser, dan pameran.',
-      productImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/Sound_System_fueh16.png',
+      productImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/Balai_dcrq40.png',
     },
     {
       vendorId: vendors[1].id,
@@ -342,7 +342,7 @@ async function main() {
       rate: 'Quantity',
       price: 30000,
       description: 'Catering Bu Daffa menyediakan berbagai macam menu makanan dan minuman untuk acara Anda.',
-      productImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/Catering_z6wsa0.png',
+      productImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/jeirx4hyelxsv9cihd63.png',
     },
     {
       vendorId: vendors[2].id,
@@ -352,7 +352,7 @@ async function main() {
       rate: 'Hourly',
       price: 150000,
       description: 'Sound System adalah perangkat audio profesional yang cocok untuk acara besar seperti konser dan festival.',
-      productImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/Balai_dcrq40.png',
+      productImage: 'https://res.cloudinary.com/dfauyfqjn/image/upload/v1723522709/z5bwhkxdyw6ykfqaqd8f.png',
     },
   ];
   const products: Product[] = [];
