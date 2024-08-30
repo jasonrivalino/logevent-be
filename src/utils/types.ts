@@ -80,6 +80,8 @@ interface ProductDetail {
   vendorName: string;
   vendorPhone: string;
   vendorAddress: string;
+  cityId: number;
+  cityName: string;
   categoryId: number;
   categoryName: string;
   name: string;
@@ -111,6 +113,8 @@ interface ReviewDetail {
 
 interface VendorDetail {
   id: number;
+  cityId: number;
+  cityName: string;
   email: string;
   name: string;
   phone: string;

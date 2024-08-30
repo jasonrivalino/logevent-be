@@ -72,6 +72,7 @@ class OrderController {
   async createOrder(req: Request, res: Response) {
     try {
       const { cartId, name, phone, address, notes, startDate, endDate } = req.body;
+      const orderTotal = await orderRepository.calculateOrderTotal(cartId, startDate, endDate);
       const newOrder = await orderRepository.createOrder({
         cartId,
         name,
@@ -79,7 +80,8 @@ class OrderController {
         address,
         notes,
         startDate,
-        endDate
+        endDate,
+        orderTotal: orderTotal,
       });
 
       const cart = await cartRepository.findCartById(cartId);
@@ -101,11 +103,12 @@ class OrderController {
       let items: (ItemEventDetail | ItemProductDetail)[] = [];
       if (cart.type === "Event") {
         items = await itemRepository.findItemsEventDetailsByCartId(cartId);
+        await nodemailerUtils.sendNewOrderEmail(userEmail, orderDetail, items);
       } else if (cart.type === "Product") {
         items = await itemRepository.findItemsProductDetailsByCartId(cartId);
+        await nodemailerUtils.sendNewOrderEmail(userEmail, orderDetail, items);
       }
 
-      await nodemailerUtils.sendNewOrderEmail(userEmail, orderDetail, items);
       res.status(201).json(newOrder);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -135,6 +138,46 @@ class OrderController {
 
       res.status(200).json(updatedOrder);
     } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  async confirmEventOrganizer(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const { newOrderTotal } = req.body;
+      const order = await orderRepository.findOrderById(id);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      const updatedOrder = await orderRepository.updateOrder(id, {
+        orderTotal: newOrderTotal,
+        orderStatus: "Pending"
+      });
+
+      const cart = await cartRepository.findCartById(order.cartId);
+      if (!cart) {
+        return res.status(404).json({ message: "Cart not found" });
+      }
+
+      const user = await userRepository.findUserById(cart.userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const userEmail = user.email;
+      const orderDetail = await orderRepository.findOrderDetailById(updatedOrder.id);
+      if (!orderDetail) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      const items = await itemRepository.findItemsProductDetailsByCartId(order.cartId);
+      await nodemailerUtils.sendNewOrderEmail(userEmail, orderDetail, items);
+
+      res.status(200).json(updatedOrder);
+    }
+    catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   }
