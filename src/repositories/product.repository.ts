@@ -135,6 +135,11 @@ class ProductRepository {
       throw new Error("Vendor not found");
     }
 
+    const city = await prisma.city.findUnique({ where: { id: vendor.cityId } });
+    if (!city) {
+      throw new Error("City not found");
+    }
+
     const category = await prisma.category.findUnique({ where: { id: product.categoryId } });
     if (!category) {
       throw new Error("Category not found");
@@ -156,6 +161,8 @@ class ProductRepository {
       vendorName: vendor.name,
       vendorPhone: vendor.phone,
       vendorAddress: vendor.address,
+      cityId: vendor.cityId,
+      cityName: city.name,
       categoryId: product.categoryId,
       categoryName: category.name,
       name: product.name,

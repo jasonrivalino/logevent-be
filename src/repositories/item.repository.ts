@@ -107,6 +107,7 @@ class ItemRepository {
       eventImage: event.eventImage,
       eventBundles: bundles.map((bundle) => bundle.name).join(", "),
       eventRating: eventRating,
+      categoryName: category ? category.name : "",
       categoryFee: category ? category.fee : 0,
       isReviewed,
     }
@@ -158,6 +159,7 @@ class ItemRepository {
       productRating: productRating,
       vendorId: product.vendorId,
       vendorAddress: vendor.address,
+      categoryName: category ? category.name : "",
       categoryFee: category ? category.fee : 0,
       duration: item.duration,
       quantity: item.quantity,

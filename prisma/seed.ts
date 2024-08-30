@@ -1,7 +1,7 @@
 // prisma/seed.ts
 
 // dependency modules
-import { Cart, Category, Event, Item, Product, User, Vendor, PrismaClient } from '@prisma/client';
+import { Cart, Category, City, Event, Item, Product, User, Vendor, PrismaClient } from '@prisma/client';
 import { hash } from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -27,9 +27,12 @@ async function main() {
   await prisma.album.deleteMany();
   await prisma.product.deleteMany();
 
+  // Delete all Vendor related data
+  await prisma.vendor.deleteMany();
+  await prisma.city.deleteMany();
+
   // Delete all data with cascade
   await prisma.category.deleteMany();
-  await prisma.vendor.deleteMany();
   await prisma.user.deleteMany();
 
   // Create 1 Admin
@@ -45,9 +48,34 @@ async function main() {
     },
   });
 
+  // Create 4 Cities
+  const cityCount = 4;
+  const cities: City[] = [];
+  const sampleCities = [
+    {
+      name: 'Jakarta',
+    },
+    {
+      name: 'Bandung',
+    },
+    {
+      name: 'Yogyakarta',
+    },
+    {
+      name: 'Surabaya',
+    },
+  ];
+  for (let i = 0; i < cityCount; i++) {
+    const city = await prisma.city.create({
+      data: sampleCities[i],
+    });
+    cities.push(city);
+  }
+
   // Create 1 Admin Vendor
   const adminVendor = await prisma.vendor.create({
     data: {
+      cityId: cities[1].id,
       email: 'logevent.eo@gmail.com',
       name: 'LogEvent',
       phone: '6289520771715',
@@ -95,6 +123,7 @@ async function main() {
   const vendors: Vendor[] = [];
   const sampleVendors = [
     {
+      cityId: cities[0].id,
       email: 'freshflora@gmail.com',
       name: 'Fresh Flora',
       phone: '1234567894',
@@ -104,6 +133,7 @@ async function main() {
       documentUrl: 'https://drive.google.com/file/d/1W1gWA621MB6zq-JU3xsPni2QB8VxmaCn/view?usp=drive_link',
     },
     {
+      cityId: cities[2].id,
       email: 'urbanfeast@gmail.com',
       name: 'Urban Feast',
       phone: '1234567895',
@@ -113,6 +143,7 @@ async function main() {
       documentUrl: 'https://drive.google.com/file/d/1W1gWA621MB6zq-JU3xsPni2QB8VxmaCn/view?usp=drive_link',
     },
     {
+      cityId: cities[3].id,
       email: 'techvisionary@gmail.com',
       name: 'Tech Visionary',
       phone: '1234567896',
@@ -200,6 +231,7 @@ async function main() {
       startDate: startDate1,
       endDate: endDate1,
       orderDate: orderDate1,
+      orderTotal: 2500000,
       orderStatus: 'Completed',
     },
     {
@@ -211,6 +243,7 @@ async function main() {
       startDate: startDate2,
       endDate: endDate2,
       orderDate: orderDate2,
+      orderTotal: 4500000,
       orderStatus: 'Completed',
     },
     {
@@ -222,6 +255,7 @@ async function main() {
       startDate: startDate3,
       endDate: endDate3,
       orderDate: orderDate3,
+      orderTotal: 7500000,
       orderStatus: 'Completed',
     },
   ];
@@ -390,6 +424,7 @@ async function main() {
       startDate: startDate4,
       endDate: endDate4,
       orderDate: orderDate4,
+      orderTotal: products[0].price * (1 + productCategories[0].fee / 100),
       orderStatus: 'Completed',
     },
     {
@@ -401,6 +436,7 @@ async function main() {
       startDate: startDate5,
       endDate: endDate5,
       orderDate: orderDate5,
+      orderTotal: products[1].price * productItems[1].quantity! * (1 + productCategories[1].fee / 100),
       orderStatus: 'Completed',
     },
     {
@@ -412,6 +448,7 @@ async function main() {
       startDate: startDate6,
       endDate: endDate6,
       orderDate: orderDate6,
+      orderTotal: products[2].price * productItems[2].duration! * (1 + productCategories[2].fee / 100),
       orderStatus: 'Completed',
     },
   ];
@@ -584,6 +621,7 @@ async function main() {
       startDate: startDate7,
       endDate: endDate7,
       orderDate: orderDate7,
+      orderTotal: events[0].price * (1 + eventCategories[0].fee / 100),
       orderStatus: 'Completed',
     },
     {
@@ -595,6 +633,7 @@ async function main() {
       startDate: startDate8,
       endDate: endDate8,
       orderDate: orderDate8,
+      orderTotal: 2 * events[1].price * (1 + eventCategories[1].fee / 100),
       orderStatus: 'Completed',
     },
     {
@@ -606,6 +645,7 @@ async function main() {
       startDate: startDate9,
       endDate: endDate9,
       orderDate: orderDate9,
+      orderTotal: 3 * events[2].price * (1 + eventCategories[2].fee / 100),
       orderStatus: 'Completed',
     },
   ];

@@ -37,6 +37,7 @@ class VendorRepository {
   }
 
   async createVendor(data: {
+    cityId: number;
     email: string;
     name: string;
     phone: string;
@@ -57,6 +58,11 @@ class VendorRepository {
   }
 
   async createVendorDetail(vendor: Vendor): Promise<VendorDetail> {
+    const city = await prisma.city.findUnique({ where: { id: vendor.cityId } });
+    if (!city) {
+      throw new Error("City not found");
+    }
+
     const products = await prisma.product.findMany({ 
       where: { 
         vendorId: vendor.id,
@@ -66,6 +72,8 @@ class VendorRepository {
     
     return {
       id: vendor.id,
+      cityId: vendor.cityId,
+      cityName: city.name,
       email: vendor.email,
       name: vendor.name,
       phone: vendor.phone,

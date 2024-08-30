@@ -122,6 +122,7 @@ class OrderRepository {
     notes: string | null;
     startDate: Date;
     endDate: Date;
+    orderTotal: number;
   }): Promise<Order> {
     return prisma.order.create({ data });
   }
@@ -145,9 +146,31 @@ class OrderRepository {
       throw new Error("User not found");
     }
 
+    return {
+      id: order.id,
+      cartId: order.cartId,
+      cartType: cart.type,
+      userId: cart.userId,
+      userEmail: user.email,
+      userName: user.name,
+      userPhone: user.phone,
+      name: order.name,
+      phone: order.phone,
+      address: order.address,
+      notes: order.notes,
+      startDate: order.startDate,
+      endDate: order.endDate,
+      orderDate: order.orderDate,
+      orderStatus: order.orderStatus,
+      orderTotal: order.orderTotal,
+    };
+  }
+
+  async calculateOrderTotal(cartId: number, startDate: Date, endDate: Date): Promise<number> {
     let orderTotal = 0;
-    const orderRange = 1 + Math.floor((order.endDate.getTime() - order.startDate.getTime()) / (1000 * 3600 * 24));
-    const items = await prisma.item.findMany({ where: { cartId: cart.id } });
+    const orderRange = 1 + Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+    const items = await prisma.item.findMany({ where: { cartId } });
+
     for (const item of items) {
       if (item.eventId) {
         const event = await prisma.event.findUnique({
@@ -172,25 +195,8 @@ class OrderRepository {
       }
     }
 
-    return {
-      id: order.id,
-      cartId: order.cartId,
-      cartType: cart.type,
-      userId: cart.userId,
-      userEmail: user.email,
-      userName: user.name,
-      userPhone: user.phone,
-      name: order.name,
-      phone: order.phone,
-      address: order.address,
-      notes: order.notes,
-      startDate: order.startDate,
-      endDate: order.endDate,
-      orderDate: order.orderDate,
-      orderStatus: order.orderStatus,
-      orderTotal: orderTotal
-    };
-  }
+    return orderTotal;
+  };
 }
 
 export default new OrderRepository();

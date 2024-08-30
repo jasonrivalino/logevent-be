@@ -32,6 +32,7 @@ interface ItemEventDetail {
   eventImage: string | null;
   eventBundles: string | null;
   eventRating: number;
+  categoryName: string;
   categoryFee: number;
   isReviewed: boolean;
 };
@@ -47,6 +48,7 @@ interface ItemProductDetail {
   productRating: number;
   vendorId: number;
   vendorAddress: string;
+  categoryName: string;
   categoryFee: number;
   duration: number | null;
   quantity: number | null;
@@ -78,6 +80,8 @@ interface ProductDetail {
   vendorName: string;
   vendorPhone: string;
   vendorAddress: string;
+  cityId: number;
+  cityName: string;
   categoryId: number;
   categoryName: string;
   name: string;
@@ -109,6 +113,8 @@ interface ReviewDetail {
 
 interface VendorDetail {
   id: number;
+  cityId: number;
+  cityName: string;
   email: string;
   name: string;
   phone: string;

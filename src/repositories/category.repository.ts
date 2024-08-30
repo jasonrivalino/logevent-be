@@ -12,11 +12,7 @@ class CategoryRepository {
 
   async findProductCategories(): Promise<Category[]> {
     return prisma.category.findMany({
-      where: {
-        type: {
-          in: ["Product", "Event Organizer"],
-        },
-      },
+      where: { id: { not: 1 } },
     });
   }
 

@@ -1,6 +1,7 @@
 // src/utils/invoice.ts
 
 // self-defined modules
+import { format } from 'path';
 import { ItemEventDetail, ItemProductDetail, OrderDetail} from './types';
 
 class InvoiceUtils {
@@ -16,9 +17,9 @@ class InvoiceUtils {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(to bottom, #fbb6ce, #fef3c7); /* Equivalent to from-pink-300 to-yellow-100 */
+            background: linear-gradient(to bottom, #fbb6ce, #fef3c7);
             border: 1px solid #ccc;
-            box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05); /* Similar to shadow-lg */
+            box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05);
             color: black;
             font-family: 'Sofia', sans-serif;
           }
@@ -77,7 +78,10 @@ class InvoiceUtils {
                 <th>INFO PRODUK</th>
                 <th>HARGA SATUAN</th>
                 <th>JUMLAH</th>
-                <th>TOTAL HARGA</th>
+                <th>
+                  TOTAL HARGA<br>
+                  <small style="font-style: italic;">*sudah termasuk biaya layanan</small>
+                </th>
               </tr>
               <tr>
                 <td colspan="4" class="table-divider"></td>
@@ -96,7 +100,7 @@ class InvoiceUtils {
                     <tr>
                       <td>
                         ${item.eventName}<br>
-                        <small>Biaya Layanan: ${item.categoryFee.toFixed(2)}%</small>
+                        <small>Paket Event - ${item.categoryName}</small>
                       </td>
                       <td>Rp ${item.eventPrice.toLocaleString()}</td>
                       <td>${this.calculateDaysBetweenDates(order.startDate, order.endDate)} Hari</td>
@@ -114,7 +118,7 @@ class InvoiceUtils {
                     <tr>
                       <td>
                         ${item.productName}<br>
-                        <small>Biaya Layanan: ${item.categoryFee.toFixed(2)}%</small>
+                        <small>Logistik Vendor - ${item.categoryName}</small>
                       </td>
                       <td>Rp ${item.productPrice.toLocaleString()}</td>
                       <td>
@@ -137,7 +141,7 @@ class InvoiceUtils {
             </tbody>
           </table>
 
-          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 80px;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 40px;">
             <tr>
               <td valign="top" style="width: 50%; padding-right: 10px;">
                 <table>
@@ -164,6 +168,11 @@ class InvoiceUtils {
               </td>
             </tr>
           </table>
+
+          <p style="font-style: italic; color: #666; font-size: 12px; margin-bottom: 60px;">
+            Note :<br>
+            Lakukan pembayaran hingga pukul ${this.formatOrderDateToWIB(order.orderDate)}, melebihi waktu tersebut pesanan Anda akan dibatalkan oleh Admin.
+          </p>
 
           <table align="center" cellpadding="0" cellspacing="0" border="0" style="color: #666;">
             <tr>
@@ -203,9 +212,9 @@ class InvoiceUtils {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(to bottom, #fbb6ce, #fef3c7); /* Equivalent to from-pink-300 to-yellow-100 */
+            background: linear-gradient(to bottom, #fbb6ce, #fef3c7);
             border: 1px solid #ccc;
-            box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05); /* Similar to shadow-lg */
+            box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -2px rgba(0, 0, 0, 0.05);
             color: black;
             font-family: 'Sofia', sans-serif;
           }
@@ -264,7 +273,10 @@ class InvoiceUtils {
                 <th>INFO PRODUK</th>
                 <th>HARGA SATUAN</th>
                 <th>JUMLAH</th>
-                <th>TOTAL HARGA</th>
+                <th>
+                  TOTAL HARGA<br>
+                  <small style="font-style: italic;">*sudah termasuk biaya layanan</small>
+                </th>
               </tr>
               <tr>
                 <td colspan="4" class="table-divider"></td>
@@ -273,18 +285,36 @@ class InvoiceUtils {
             <tbody>
               ${items.map((item) => {
                 if ('eventId' in item) {
+                  const totalPrice = Math.ceil(
+                    item.eventPrice *
+                    this.calculateDaysBetweenDates(order.startDate, order.endDate) *
+                    (1 + item.categoryFee / 100)
+                  );
+
                   return `
                     <tr>
-                      <td>${item.eventName}</td>
+                      <td>
+                        ${item.eventName}<br>
+                        <small>Paket Event - ${item.categoryName}</small>
+                      </td>
                       <td>Rp ${item.eventPrice.toLocaleString()}</td>
                       <td>${this.calculateDaysBetweenDates(order.startDate, order.endDate)} Hari</td>
-                      <td>Rp ${(item.eventPrice*this.calculateDaysBetweenDates(order.startDate, order.endDate)).toLocaleString()}</td>
+                      <td>Rp ${totalPrice.toLocaleString()}</td>
                     </tr>
                   `;
                 } else {
+                  const totalPrice = item.duration !== null
+                  ? Math.ceil(item.productPrice * item.duration * (1 + item.categoryFee / 100))
+                  : item.quantity !== null
+                  ? Math.ceil(item.productPrice * item.quantity * (1 + item.categoryFee / 100))
+                  : Math.ceil(item.productPrice * this.calculateDaysBetweenDates(order.startDate, order.endDate) * (1 + item.categoryFee / 100));
+
                   return `
                     <tr>
-                      <td>${item.productName}</td>
+                      <td>
+                        ${item.productName}<br>
+                        <small>Logistik Vendor - ${item.categoryName}</small>
+                      </td>
                       <td>Rp ${item.productPrice.toLocaleString()}</td>
                       <td>
                         ${
@@ -295,15 +325,7 @@ class InvoiceUtils {
                             : this.calculateDaysBetweenDates(order.startDate, order.endDate) + " Hari"
                         }
                       </td>
-                      <td>
-                        Rp ${
-                          item.duration !== null
-                            ? (item.productPrice * item.duration).toLocaleString()
-                            : item.quantity !== null
-                            ? (item.productPrice * item.quantity).toLocaleString()
-                            : (item.productPrice * this.calculateDaysBetweenDates(order.startDate, order.endDate)).toLocaleString()
-                        }
-                      </td>
+                      <td>Rp ${totalPrice.toLocaleString()}</td>
                     </tr>
                   `;
                 }
@@ -321,9 +343,7 @@ class InvoiceUtils {
               </td>
               
               <td valign="top" style="width: 50%; text-align: right;">
-                <p style="margin: 0;">Sub Total: <strong>Rp ${order.orderTotal.toLocaleString()}</strong></p>
-                <p style="margin: 0;">Biaya Layanan: <strong>1.75%</strong></p>
-                <p style="margin: 0;"><strong>Total Pembayaran: Rp ${Math.ceil(order.orderTotal * 1.0175).toLocaleString()}</strong></p>
+                <p style="margin: 0;"><strong>Total Pembayaran: Rp ${Math.ceil(order.orderTotal).toLocaleString()}</strong></p>
               </td>
             </tr>
           </table>
@@ -377,6 +397,26 @@ class InvoiceUtils {
     const minutes = String(wibTime.getMinutes()).padStart(2, '0');
     
     return `${month}/${day}/${year} ${hours}:${minutes}`;
+  }
+
+  formatOrderDateToWIB(orderDate: Date) {
+    const utcOffset = 7 * 60 * 60 * 1000;
+    const tomorrow = new Date(orderDate.getTime() + 24 * 60 * 60 * 1000);
+    const wibTime = new Date(tomorrow.getTime() + utcOffset);
+
+    const day = String(wibTime.getDate()).padStart(2, '0');
+    const monthIndex = wibTime.getMonth();
+    const year = wibTime.getFullYear();
+    const hours = String(wibTime.getHours()).padStart(2, '0');
+    const minutes = String(wibTime.getMinutes()).padStart(2, '0');
+
+    const months = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+  
+    const monthName = months[monthIndex];
+    return `${hours}.${minutes} tanggal ${day} ${monthName} ${year}`;
   }
 
   calculateDaysBetweenDates(startDate: Date, endDate: Date) {

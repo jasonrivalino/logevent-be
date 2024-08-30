@@ -55,6 +55,13 @@ model Category {
   products Product[]
 }
 
+model City {
+  id      Int       @id @default(autoincrement())
+  name    String
+
+  vendors Vendor[]
+}
+
 model Event {
   id          Int      @id @default(autoincrement())
   categoryId  Int
@@ -102,6 +109,7 @@ model Order {
   startDate   DateTime
   endDate     DateTime
   orderDate   DateTime  @default(now())
+  orderTotal  Float
   orderStatus String    @default("Pending")
 
   cart        Cart      @relation(fields: [cartId], references: [id])
@@ -163,18 +171,20 @@ model User {
 }
 
 model Vendor {
-  id          Int       @id @default(autoincrement())
-  email       String    @unique
+  id          Int        @id @default(autoincrement())
+  cityId      Int
+  email       String     @unique
   name        String
   phone       String
   address     String
   instagram   String?
   socialMedia String?
-  documentUrl String?   @db.Text
-  joinDate    DateTime  @default(now())
-  isDeleted   Boolean   @default(false)
+  documentUrl String?    @db.Text
+  joinDate    DateTime   @default(now())
+  isDeleted   Boolean    @default(false)
 
-  products Product[]
+  city        City       @relation(fields: [cityId], references: [id])
+  products    Product[]
 }
 
 model Visit {
