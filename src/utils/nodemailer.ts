@@ -53,8 +53,12 @@ class NodemailerUtils {
       html: invoiceHtml
     };
 
-    if (order.cartType === 'Product') {
-      return this.sendMail(mailOptions);
+    if (order.orderTotal > 0) {
+      this.sendMail(mailOptions);
+    }
+
+    if (order.cartType === 'Event Organizer' && order.orderTotal > 0) {
+      return;
     }
 
     const adminEmails = await prisma.admin.findMany({ select: { email: true } });

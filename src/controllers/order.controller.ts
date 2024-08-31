@@ -106,12 +106,11 @@ class OrderController {
       let items: (ItemEventDetail | ItemProductDetail)[] = [];
       if (cart.type === "Event") {
         items = await itemRepository.findItemsEventDetailsByCartId(cartId);
-        await nodemailerUtils.sendNewOrderEmail(userEmail, orderDetail, items);
       } else if (cart.type === "Product" || cart.type === "Event Organizer") {
         items = await itemRepository.findItemsProductDetailsByCartId(cartId);
-        await nodemailerUtils.sendNewOrderEmail(userEmail, orderDetail, items);
       }
-
+      
+      await nodemailerUtils.sendNewOrderEmail(userEmail, orderDetail, items);
       res.status(201).json(newOrder);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
@@ -126,7 +125,7 @@ class OrderController {
         return res.status(404).json({ message: "Order not found" });
       }
 
-      const { cartId, name, phone, address, notes, startDate, endDate, orderDate, orderStatus } = req.body;
+      const { cartId, name, phone, address, notes, startDate, endDate, orderDate, orderTotal, orderStatus } = req.body;
       const updatedOrder = await orderRepository.updateOrder(id, {
         cartId: cartId || order.cartId,
         name: name || order.name,
@@ -136,6 +135,7 @@ class OrderController {
         startDate: startDate || order.startDate,
         endDate: endDate || order.endDate,
         orderDate: orderDate || order.orderDate,
+        orderTotal: orderTotal || order.orderTotal,
         orderStatus: orderStatus || order.orderStatus
       });
 
@@ -216,7 +216,7 @@ class OrderController {
       let items: (ItemEventDetail | ItemProductDetail)[] = [];
       if (cart.type === "Event") {
         items = await itemRepository.findItemsEventDetailsByCartId(order.cartId);
-      } else if (cart.type === "Product") {
+      } else if (cart.type === "Product" || cart.type === "Event Organizer") {
         items = await itemRepository.findItemsProductDetailsByCartId(order.cartId);
       }
 
@@ -287,6 +287,7 @@ class OrderController {
       .get("/read/:id", this.readOrderById)
       .post("/create", this.createOrder)
       .put("/update/:id", this.updateOrder)
+      .put("/confirm-event-organizer/:id", this.confirmEventOrganizer)
       .put("/confirm-payment/:id", this.confirmOrderPayment)
       .put("/cancel/:id", this.cancelOrder)
       .delete("/delete/:id", this.deleteOrder);
