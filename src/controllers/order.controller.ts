@@ -107,7 +107,7 @@ class OrderController {
       if (cart.type === "Event") {
         items = await itemRepository.findItemsEventDetailsByCartId(cartId);
         await nodemailerUtils.sendNewOrderEmail(userEmail, orderDetail, items);
-      } else if (cart.type === "Product") {
+      } else if (cart.type === "Product" || cart.type === "Event Organizer") {
         items = await itemRepository.findItemsProductDetailsByCartId(cartId);
         await nodemailerUtils.sendNewOrderEmail(userEmail, orderDetail, items);
       }

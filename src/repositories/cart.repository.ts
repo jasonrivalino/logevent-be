@@ -34,6 +34,16 @@ class CartRepository {
     });
   }
 
+  async findActiveEventOrganizerCartByUserId(userId: number): Promise<Cart | null> {
+    return prisma.cart.findFirst({
+      where: {
+        userId,
+        type: "Event Organizer",
+        cartStatus: "Active",
+      },
+    });
+  }
+
   async findCartById(id: number): Promise<Cart | null> {
     return prisma.cart.findUnique({ where: { id } });
   }
