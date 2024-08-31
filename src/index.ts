@@ -4,6 +4,7 @@
 import express from 'express';
 import cors from 'cors';
 // self-defined modules
+import adminController from './controllers/admin.controller';
 import albumController from './controllers/album.controller';
 import authController from './controllers/auth.controller';
 import bundleController from './controllers/bundle.controller';
@@ -30,6 +31,7 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '2mb' }));
 
+app.use('/admins', adminController.getRoutes());
 app.use('/albums', albumController.getRoutes());
 app.use('/auth', authController.getRoutes());
 app.use('/bundles', bundleController.getRoutes());

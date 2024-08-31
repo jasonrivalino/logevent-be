@@ -61,7 +61,7 @@ class OrderRepository {
           bundles.forEach(bundle => productIds.add(bundle.productId));
         }
       }
-    } else if (cart.type === 'Product') {
+    } else if (cart.type === 'Product' || cart.type === 'Event Organizer') {
       const items = await prisma.item.findMany({
         where: { cartId: cartId, productId: { not: null } },
         include: { product: true },
@@ -77,6 +77,9 @@ class OrderRepository {
       where: {
         endDate: {
           gte: new Date(),
+        },
+        orderStatus: {
+          not: 'Cancelled',
         },
       },
       include: {
@@ -195,7 +198,7 @@ class OrderRepository {
       }
     }
 
-    return orderTotal;
+    return Math.ceil(orderTotal);
   };
 }
 

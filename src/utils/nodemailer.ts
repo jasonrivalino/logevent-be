@@ -53,6 +53,14 @@ class NodemailerUtils {
       html: invoiceHtml
     };
 
+    if (order.orderTotal > 0) {
+      this.sendMail(mailOptions);
+    }
+
+    if (order.cartType === 'Event Organizer' && order.orderTotal > 0) {
+      return;
+    }
+
     const adminEmails = await prisma.admin.findMany({ select: { email: true } });
     adminEmails.forEach((admin) => {
       this.sendMail({
@@ -65,8 +73,6 @@ class NodemailerUtils {
         `
       });
     });
-
-    return this.sendMail(mailOptions);
   }
 
   // TODO: Fix Send Paid Order Email

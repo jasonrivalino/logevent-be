@@ -60,6 +60,21 @@ class CartController {
     }
   }
 
+  async readActiveEventOrganizerCartByUserId(req: Request, res: Response) {
+    try {
+      const userId = Number(req.params.userId);
+      const cart = await cartRepository.findActiveEventOrganizerCartByUserId(userId);
+      if (!cart) {
+        return res.status(404).json({ message: "Active Event Organizer Cart not found" });
+      }
+
+      res.status(200).json(cart);
+    }
+    catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
   async readCartById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
@@ -132,6 +147,7 @@ class CartController {
       .get("/read/user/:userId", this.readCartsByUserId)
       .get("/read/event/:userId", this.readActiveEventCartByUserId)
       .get("/read/product/:userId", this.readActiveProductCartByUserId)
+      .get("/read/event-organizer/:userId", this.readActiveEventOrganizerCartByUserId)
       .get("/read/:id", this.readCartById)
       .post("/create", this.createCart)
       .put("/update/:id", this.updateCart)

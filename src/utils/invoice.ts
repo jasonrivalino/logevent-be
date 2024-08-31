@@ -118,9 +118,19 @@ class InvoiceUtils {
                     <tr>
                       <td>
                         ${item.productName}<br>
-                        <small>Logistik Vendor - ${item.categoryName}</small>
+                        ${
+                          item.productId !== 1
+                            ? `<small>Logistik Vendor - ${item.categoryName}</small>`
+                            : ""
+                        }
                       </td>
-                      <td>Rp ${item.productPrice.toLocaleString()}</td>
+                      <td>
+                        ${
+                          item.productId === 1
+                            ? `Rp ${Math.ceil(order.orderTotal).toLocaleString()}`
+                            : `Rp ${item.productPrice.toLocaleString()}`
+                        }
+                      </td>
                       <td>
                         ${
                           item.duration !== null
@@ -130,7 +140,13 @@ class InvoiceUtils {
                             : this.calculateDaysBetweenDates(order.startDate, order.endDate) + " Hari"
                         }
                       </td>
-                      <td>Rp ${totalPrice.toLocaleString()}</td>
+                      <td>
+                        ${
+                          item.productId === 1
+                            ? `Rp ${Math.ceil(order.orderTotal).toLocaleString()}`
+                            : `Rp ${totalPrice.toLocaleString()}`
+                        }
+                      </td>
                     </tr>
                   `;
                 }
@@ -313,9 +329,19 @@ class InvoiceUtils {
                     <tr>
                       <td>
                         ${item.productName}<br>
-                        <small>Logistik Vendor - ${item.categoryName}</small>
+                        ${
+                          item.productId !== 1
+                            ? `<small>Logistik Vendor - ${item.categoryName}</small>`
+                            : ""
+                        }
                       </td>
-                      <td>Rp ${item.productPrice.toLocaleString()}</td>
+                      <td>
+                        ${
+                          item.productId === 1
+                            ? `Rp ${Math.ceil(order.orderTotal).toLocaleString()}`
+                            : `Rp ${item.productPrice.toLocaleString()}`
+                        }
+                      </td>
                       <td>
                         ${
                           item.duration !== null
@@ -325,7 +351,13 @@ class InvoiceUtils {
                             : this.calculateDaysBetweenDates(order.startDate, order.endDate) + " Hari"
                         }
                       </td>
-                      <td>Rp ${totalPrice.toLocaleString()}</td>
+                      <td>
+                        ${
+                          item.productId === 1
+                            ? `Rp ${Math.ceil(order.orderTotal).toLocaleString()}`
+                            : `Rp ${totalPrice.toLocaleString()}`
+                        }
+                      </td>
                     </tr>
                   `;
                 }

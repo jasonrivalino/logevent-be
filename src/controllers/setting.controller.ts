@@ -6,9 +6,9 @@ import { Request, Response, Router } from "express";
 import settingRepository from "../repositories/setting.repository";
 
 class SettingController {
-  async findSetting(req: Request, res: Response) {
+  async readSetting(req: Request, res: Response) {
     try {
-      const setting = await settingRepository.findSetting();
+      const setting = await settingRepository.readSetting();
       if (!setting) {
         return res.status(404).json({ message: "Setting not found" });
       }
@@ -21,7 +21,7 @@ class SettingController {
 
   async updateSetting(req: Request, res: Response) {
     try {
-      const setting = await settingRepository.findSetting();
+      const setting = await settingRepository.readSetting();
       if (!setting) {
         return res.status(404).json({ message: "Setting not found" });
       }
@@ -48,7 +48,7 @@ class SettingController {
 
   getRoutes() {
     return Router()
-      .get("/read", this.findSetting)
+      .get("/read", this.readSetting)
       .put("/update", this.updateSetting)
   }
 }
