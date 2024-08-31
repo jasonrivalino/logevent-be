@@ -71,7 +71,10 @@ class OrderController {
   // TODO: Fix Create Order
   async createOrder(req: Request, res: Response) {
     try {
-      const { cartId, name, phone, address, notes, startDate, endDate } = req.body;
+      const { cartId, name, phone, address, notes, startDateString, endDateString } = req.body;
+      const startDate = new Date(startDateString);
+      const endDate = new Date(endDateString);
+
       const orderTotal = await orderRepository.calculateOrderTotal(cartId, startDate, endDate);
       const newOrder = await orderRepository.createOrder({
         cartId,

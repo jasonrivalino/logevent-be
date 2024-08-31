@@ -195,7 +195,7 @@ class OrderRepository {
       }
     }
 
-    return orderTotal;
+    return Math.ceil(orderTotal);
   };
 }
 

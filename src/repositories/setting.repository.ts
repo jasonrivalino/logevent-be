@@ -6,7 +6,7 @@ import { Setting } from "@prisma/client";
 import prisma from "../utils/prisma";
 
 class SettingRepository {
-  async findSetting(): Promise<Setting | null> {
+  async readSetting(): Promise<Setting | null> {
     return prisma.setting.findFirst();
   }
 
