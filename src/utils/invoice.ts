@@ -80,7 +80,7 @@ class InvoiceUtils {
                 <th>JUMLAH</th>
                 <th>
                   TOTAL HARGA<br>
-                  <small style="font-style: italic;">*sudah termasuk biaya layanan</small>
+                  <small style="font-style: italic;  color: #666; font-weight: normal;">*sudah termasuk biaya layanan</small>
                 </th>
               </tr>
               <tr>
@@ -162,7 +162,7 @@ class InvoiceUtils {
               <td valign="top" style="width: 50%; padding-right: 10px;">
                 <table>
                   <tr>
-                    <td style="margin: 0;"><strong>Payment Info:</strong></td>
+                    <td style="margin: 0;"><strong>Payment Info</strong></td>
                   </tr>
                   <tr>
                     <td style="margin: 0;">Account No</td>
@@ -291,7 +291,7 @@ class InvoiceUtils {
                 <th>JUMLAH</th>
                 <th>
                   TOTAL HARGA<br>
-                  <small style="font-style: italic;">*sudah termasuk biaya layanan</small>
+                  <small style="font-style: italic;  color: #666; font-weight: normal;">*sudah termasuk biaya layanan</small>
                 </th>
               </tr>
               <tr>
